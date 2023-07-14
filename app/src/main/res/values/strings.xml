@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">E-Ticaret-App</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="enter_your_username">Enter your username</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="log_in">Log In</string>
+    <string name="product_image">Product Image</string>
+    <string name="product_title">Product Title</string>
+    <string name="product_description">Product Description</string>
+    <string name="full_name">Full Name</string>
+    <string name="email_email_com">Email@email.com</string>
+</resources>
