@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navHostFragment: NavHostFragment
     companion object {
         val dummyService: DummyService = ApiClient.getClient().create(DummyService::class.java)
-        lateinit var userId: String
+        var userId: Long = -1
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         bindViews()
         NavigationUI.setupWithNavController(bottomNav, navHostFragment.navController)
 
-        userId = intent.getStringExtra("userId")!!
+        userId = intent.getLongExtra("userId", -1)
     }
 
     private fun bindViews() {

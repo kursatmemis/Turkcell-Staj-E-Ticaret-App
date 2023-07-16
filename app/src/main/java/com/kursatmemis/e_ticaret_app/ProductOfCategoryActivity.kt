@@ -1,5 +1,6 @@
 package com.kursatmemis.e_ticaret_app
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -26,6 +27,13 @@ class ProductOfCategoryActivity : AppCompatActivity() {
         getProductsOfCategory(categoryName)
         productsOfCategoryAdapter = ProductAdapter(productsOfCategoryListView.context, productsOfCategory)
         productsOfCategoryListView.adapter = productsOfCategoryAdapter
+
+        productsOfCategoryListView.setOnItemClickListener { parent, view, position, id ->
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra("product", productsOfCategory[position])
+            startActivity(intent)
+        }
+
     }
 
     private fun getProductsOfCategory(categoryName: String?) {

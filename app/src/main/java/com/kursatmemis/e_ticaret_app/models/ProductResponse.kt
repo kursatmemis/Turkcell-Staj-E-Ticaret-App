@@ -1,5 +1,7 @@
 package com.kursatmemis.e_ticaret_app.models
 
+import java.io.Serializable
+
 data class ProductResponse (
     val products: List<Product>,
     val total: Long,
@@ -19,4 +21,4 @@ data class Product (
     val category: String,
     val thumbnail: String,
     val images: List<String>
-)
+): Serializable

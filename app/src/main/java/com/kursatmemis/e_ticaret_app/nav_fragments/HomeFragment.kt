@@ -1,5 +1,6 @@
 package com.kursatmemis.e_ticaret_app.nav_fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import androidx.fragment.app.Fragment
+import com.kursatmemis.e_ticaret_app.DetailActivity
 import com.kursatmemis.e_ticaret_app.MainActivity
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.adapters.ProductAdapter
@@ -29,10 +31,15 @@ class HomeFragment : Fragment() {
         val homeFragmentLayout = inflater.inflate(R.layout.fragment_home, container, false)
         productsListView = homeFragmentLayout.findViewById(R.id.productsListView)
 
-
         productAdapter = ProductAdapter(productsListView.context, products)
         productsListView.adapter = productAdapter
         getProducts()
+
+        productsListView.setOnItemClickListener { parent, view, position, id ->
+            val intent = Intent(inflater.context, DetailActivity::class.java)
+            intent.putExtra("product", products[position])
+            startActivity(intent)
+        }
 
         return homeFragmentLayout
     }

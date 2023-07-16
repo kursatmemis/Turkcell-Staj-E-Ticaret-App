@@ -1,36 +1,39 @@
 package com.kursatmemis.e_ticaret_app.nav_fragments
 
-import android.app.DatePickerDialog
 import android.graphics.Typeface
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.RadioButton
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.kursatmemis.e_ticaret_app.MainActivity
-
 import com.kursatmemis.e_ticaret_app.R
-import com.kursatmemis.e_ticaret_app.models.UserResponse
+import com.kursatmemis.e_ticaret_app.models.Address
+import com.kursatmemis.e_ticaret_app.models.UserProfileInfo
+import com.kursatmemis.e_ticaret_app.models.UserDetail
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.io.IOException
 
 class ProfileFragment : Fragment() {
 
+    private lateinit var progressBar: ProgressBar
+    private lateinit var saveButton: Button
     private lateinit var imageImageView: ImageView
     private lateinit var nameEditText: EditText
     private lateinit var surnameEditText: EditText
@@ -43,94 +46,165 @@ class ProfileFragment : Fragment() {
     private lateinit var femaleRadioButton: RadioButton
     private lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
     private lateinit var toolbar: Toolbar
-
+    private var userDetail: UserDetail? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val profileFragmentLayout = inflater.inflate(R.layout.fragment_profile, container, false)
         bindViews(profileFragmentLayout)
-        collapsingToolbarLayout.setExpandedTitleTypeface(Typeface.create(collapsingToolbarLayout.expandedTitleTypeface, Typeface.BOLD));
-        collapsingToolbarLayout.setCollapsedTitleTypeface(Typeface.create(collapsingToolbarLayout.expandedTitleTypeface, Typeface.BOLD))
-        getUserInfos(MainActivity.userId)
+        setCollapsingToolbarTitleTypes()
+        showProgressBar()
+
+        val scope = CoroutineScope(Dispatchers.Main)
+        scope.launch {
+            userDetail = getUserAllInfo()
+            if (userDetail != null) {
+                val userProfileInfo = getUserProfileInfo(userDetail!!)
+                showUserInfoOnScreen(userProfileInfo)
+                hideProgressBar()
+            } else {
+                Toast.makeText(
+                    nameEditText.context,
+                    "Unable to fetch data. Please try again later.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        saveButton.setOnClickListener {
+            val userProfileInfo =getUserProfileInfoFromEditText()
+            showProgressBar()
+            updateUserInfo(userProfileInfo)
+        }
+
         return profileFragmentLayout
     }
 
-    private fun getUserInfos(userId: String) {
-        MainActivity.dummyService.getUserInfo(userId).enqueue(object :
-            Callback<UserResponse> {
-            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
-                val body = response.body()
-                if (body != null) {
-                    setValues(body)
-                    Log.w("mKm - getUserInfos", "Body: $body")
-                } else {
-                    Log.w("mKm - getUserInfos", "Body is null.")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                Log.w("mKm - getUserInfos", "onFailure: $t")
-            }
-
-        })
+    private fun getUserProfileInfoFromEditText(): UserProfileInfo {
+        val image = userDetail?.image
+        val name = nameEditText.text.toString()
+        val surname = surnameEditText.text.toString()
+        val email = emailEditText.text.toString()
+        val phone = phoneEditText.text.toString()
+        val address = Address(
+            addressEditText.text.toString(),
+            cityEditText.text.toString(),
+            userDetail?.address!!.coordinates,
+            userDetail?.address!!.postalCode,
+            userDetail?.address!!.state
+        )
+        val birthDate = birthDateEditText.text.toString()
+        val gender = if (maleRadioButton.isChecked) {
+            "male"
+        } else {
+            "female"
+        }
+        return UserProfileInfo(image!!, name, surname, email, phone, address, birthDate, gender)
     }
 
-    private fun setValues(userInfo: UserResponse) {
-        Glide.with(imageImageView.context).load(userInfo.image).into(imageImageView)
-        nameEditText.setText(userInfo.firstName)
-        surnameEditText.setText(userInfo.lastName)
-        emailEditText.setText(userInfo.email)
-        phoneEditText.setText(userInfo.phone)
-        cityEditText.setText(userInfo.address.city)
-        addressEditText.setText(userInfo.address.address)
-        val birthDate = parseBirthDate(userInfo.birthDate) // Kullanıcı bilgilerinden doğum tarihini alın ve işleyin
+    private fun showUserInfoOnScreen(userProfileInfo: UserProfileInfo) {
+        Glide.with(imageImageView.context).load(userProfileInfo.image).into(imageImageView)
+        nameEditText.setText(userProfileInfo.firstName)
+        surnameEditText.setText(userProfileInfo.lastName)
+        emailEditText.setText(userProfileInfo.email)
+        phoneEditText.setText(userProfileInfo.phone)
+        cityEditText.setText(userProfileInfo.address.city)
+        addressEditText.setText(userProfileInfo.address.address)
 
-        // Doğum tarihini uygun formata dönüştürün ve birthDateEditText'e yerleştirin
-        val formattedBirthDate = formatBirthDate(birthDate!!)
-        birthDateEditText.setText(formattedBirthDate)
-
-        // birthDateEditText üzerine tıklanıldığında doğum tarihini başlatan bir tıklama dinleyicisi ekleme
-        birthDateEditText.setOnClickListener {
-            showDatePickerDialog(birthDate)
-        }
-
-        if (userInfo.gender == "male") {
+        if (userProfileInfo.gender == "male") {
             maleRadioButton.isChecked = true
         } else {
             femaleRadioButton.isChecked = true
         }
     }
 
-    private fun parseBirthDate(dateString: String): Date? {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        return dateFormat.parse(dateString)
+    private fun getUserProfileInfo(userResponse: UserDetail): UserProfileInfo {
+        val image = userResponse.image
+        val firstName = userResponse.firstName
+        val lastName = userResponse.lastName
+        val email = userResponse.email
+        val phone = userResponse.phone
+        val address = Address(
+            userResponse.address.address,
+            userResponse.address.city,
+            userResponse.address.coordinates,
+            userResponse.address.postalCode,
+            userResponse.address.state
+        )
+        val birthDate = userResponse.birthDate
+        val gender = userResponse.gender
+        return UserProfileInfo(image, firstName, lastName, email, phone, address, birthDate, gender)
     }
 
-    private fun formatBirthDate(birthDate: Date): String {
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return dateFormat.format(birthDate)
+    private fun updateUserInfo(
+        userProfileInfo: UserProfileInfo,
+        userId: Long = MainActivity.userId
+    ) {
+        MainActivity.dummyService.updateUserInfo(userId, userProfileInfo)
+            .enqueue(object : Callback<UserDetail> {
+                override fun onResponse(
+                    call: Call<UserDetail>,
+                    response: Response<UserDetail>
+                ) {
+                    val body = response.body()
+                    if (body != null) {
+                        Log.w("mKm - updateProfile", "Body: $body")
+                    } else {
+                        Log.w("mKm - updateProfile", "Body is null.")
+                    }
+                    hideProgressBar()
+                }
+
+                override fun onFailure(call: Call<UserDetail>, t: Throwable) {
+                    Log.w("mKm - updateProfile", "onFailure: $t")
+                    hideProgressBar()
+                }
+            })
     }
 
-    private fun showDatePickerDialog(initialDate: Date) {
-        val calendar = Calendar.getInstance()
-        calendar.time = initialDate
+    private suspend fun getUserAllInfo(): UserDetail? = withContext(Dispatchers.IO) {
+        try {
+            val response = MainActivity.dummyService.getUserInfos().execute()
+            if (response.isSuccessful) {
+                Log.w("mKm - getUserInfos", response.body().toString())
+                response.body()
+            } else {
+                Log.w("mKm - getUserInfos", "Request failed with code: ${response.code()}")
+                null
+            }
+        } catch (e: IOException) {
+            Log.w("mKm - getUserInfos", "Request failed: ${e.message}")
+            null
+        }
+    }
 
-        val datePickerDialog = DatePickerDialog(nameEditText.context,
-            { _, year, monthOfYear, dayOfMonth ->
-                val selectedDate = Calendar.getInstance()
-                selectedDate.set(Calendar.YEAR, year)
-                selectedDate.set(Calendar.MONTH, monthOfYear)
-                selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+    private fun hideProgressBar() {
+        progressBar.visibility = View.GONE
+    }
 
-                val formattedDate = formatBirthDate(selectedDate.time)
-                birthDateEditText.setText(formattedDate)
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+    private fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
 
-        datePickerDialog.show()
+    private fun setCollapsingToolbarTitleTypes() {
+        collapsingToolbarLayout.setExpandedTitleTypeface(
+            Typeface.create(
+                collapsingToolbarLayout.expandedTitleTypeface,
+                Typeface.BOLD
+            )
+        )
+        collapsingToolbarLayout.setCollapsedTitleTypeface(
+            Typeface.create(
+                collapsingToolbarLayout.expandedTitleTypeface,
+                Typeface.BOLD
+            )
+        )
     }
 
     private fun bindViews(profileFragmentLayout: View) {
+        progressBar = profileFragmentLayout.findViewById(R.id.progressBar)
+        saveButton = profileFragmentLayout.findViewById(R.id.saveButton)
         imageImageView = profileFragmentLayout.findViewById(R.id.imageImageView)
         nameEditText = profileFragmentLayout.findViewById(R.id.nameEditText)
         surnameEditText = profileFragmentLayout.findViewById(R.id.surnameEditText)

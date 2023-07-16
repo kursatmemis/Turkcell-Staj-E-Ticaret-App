@@ -3,14 +3,15 @@ package com.kursatmemis.e_ticaret_app
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
+import android.widget.ProgressBar
 import com.kursatmemis.e_ticaret_app.configs.ApiClient
 import com.kursatmemis.e_ticaret_app.models.User
 import com.kursatmemis.e_ticaret_app.models.UserData
 import com.kursatmemis.e_ticaret_app.services.DummyService
+import com.shashank.sony.fancytoastlib.FancyToast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,7 +21,9 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var usernameEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var loginButton: Button
+    private lateinit var progressBar: ProgressBar
     private val dummyService = ApiClient.getClient().create(DummyService::class.java)
+    private var userId: Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,61 +34,76 @@ class LoginActivity : AppCompatActivity() {
             val username = usernameEditText.text.toString()
             val password = passwordEditText.text.toString()
             if (username.isNotEmpty() && password.isNotEmpty()) {
+                showProgressBar()
                 val user = User(username, password)
                 login(user)
             } else {
-                Toast.makeText(
-                    this@LoginActivity,
-                    "Please fill in the username and password fields.",
-                    Toast.LENGTH_SHORT
+                FancyToast.makeText(
+                    this, "Please fill in the username and password fields.",
+                    FancyToast.LENGTH_LONG,
+                    FancyToast.INFO, false
                 ).show()
             }
         }
-
     }
 
-    /**
-     * It provides to go to MainActivity.
-     * It sends 'response.body' to MainActivity by using Intent.
-     */
-    private fun goToMainActivity(userId: String) {
+    private fun goToMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("userId", userId)
         startActivity(intent)
+        finish()
     }
 
-    /**
-     * It will send a request to the server for login.
-     * If response isn't null, it will call method goToMainActivity
-     *
-     * @user: An object containing the username and password.
-     */
     private fun login(user: User) {
         dummyService.login(user).enqueue(object : Callback<UserData> {
             override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
                 val body = response.body()
                 if (body != null) {
-                    Toast.makeText(this@LoginActivity, "Login is successful.", Toast.LENGTH_SHORT).show()
-                    val userId = body.id.toString()
-                    goToMainActivity(userId)
-                    finish()
+                    userId = body.id
+                    loginSuccessful()
                 } else {
-                    Log.w("mKm - login", "Body is null.")
+                    loginFailed()
                 }
             }
 
             override fun onFailure(call: Call<UserData>, t: Throwable) {
-                Log.w("mKm - login", "onFailure: $t")
+                loginFailed()
             }
         })
     }
 
-    /**
-     * Binds the views in layout file to the code.
-     */
+    private fun loginSuccessful() {
+        val msg = "Login is successful."
+        showToast(msg, true)
+        goToMainActivity()
+    }
+
+    private fun loginFailed() {
+        hintProgressBar()
+        val msg = "An error occurred. Please try again later."
+        showToast(msg, false)
+    }
+
+    private fun showToast(msg: String, isSuccessful: Boolean) {
+        if (isSuccessful) {
+            FancyToast.makeText(this, msg, FancyToast.LENGTH_LONG, FancyToast.INFO, false).show()
+        }else {
+            FancyToast.makeText(this, msg, FancyToast.LENGTH_LONG, FancyToast.ERROR, false).show()
+        }
+    }
+
+    private fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hintProgressBar() {
+        progressBar.visibility = View.INVISIBLE
+    }
+
     private fun bindViews() {
         usernameEditText = findViewById(R.id.usernameEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         loginButton = findViewById(R.id.loginButton)
+        progressBar = findViewById(R.id.progressBar)
     }
 }

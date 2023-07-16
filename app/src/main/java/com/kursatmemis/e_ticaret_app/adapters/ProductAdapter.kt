@@ -31,7 +31,7 @@ class ProductAdapter(context: Context, private val products: List<Product>) :
             viewHolder = convertView.tag as ViewHolder
         }
 
-        val imgLink = products[position].images[0]
+        val imgLink = products[position].thumbnail
         val productTitle = products[position].title
         val productDescription = products[position].description
 

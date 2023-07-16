@@ -1,6 +1,6 @@
 package com.kursatmemis.e_ticaret_app.models
 
-data class UserResponse (
+data class UserDetail (
     val id: Long,
     val firstName: String,
     val lastName: String,
