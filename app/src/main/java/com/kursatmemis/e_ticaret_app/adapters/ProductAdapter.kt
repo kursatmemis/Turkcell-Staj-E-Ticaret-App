@@ -1,6 +1,7 @@
 package com.kursatmemis.e_ticaret_app.adapters
 
 import android.content.Context
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.models.Product
+
 
 class ProductAdapter(context: Context, private val products: List<Product>) :
     ArrayAdapter<Product>(context, R.layout.product_item, products) {
@@ -35,7 +37,7 @@ class ProductAdapter(context: Context, private val products: List<Product>) :
         val productTitle = products[position].title
         val productDescription = products[position].description
 
-        Glide.with(context).load(imgLink).into(viewHolder.productImageImageView);
+        Glide.with(context).load(imgLink).fitCenter().into(viewHolder.productImageImageView);
         viewHolder.productTitleTextView.text = productTitle
         viewHolder.productDescriptionTextView.text = productDescription
 

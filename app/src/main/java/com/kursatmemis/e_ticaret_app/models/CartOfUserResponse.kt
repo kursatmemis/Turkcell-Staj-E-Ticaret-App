@@ -17,12 +17,12 @@ data class Cart (
     val totalQuantity: Long
 )
 
-data class ProductOfCart (
-    val id: Long,
-    val title: String,
-    val price: Long,
-    val quantity: Long,
-    val total: Long,
-    val discountPercentage: Double,
-    val discountedPrice: Long
-)
+    data class ProductOfCart (
+        val id: Long,
+        val title: String,
+        val price: Long,
+        val quantity: Long,
+        val total: Long,
+        val discountPercentage: Double,
+        val discountedPrice: Long
+    )

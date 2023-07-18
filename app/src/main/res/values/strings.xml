@@ -14,4 +14,6 @@
     <string name="user_password">0lelplR</string>
     <string name="username">kminchelle</string>
     <string name="logo">Logo</string>
+    <string name="enter_a_keyword">Enter a keyword</string>
+    <string name="child_item">Child Item</string>
 </resources>

@@ -12,63 +12,53 @@ import android.widget.ListView
 import com.kursatmemis.e_ticaret_app.MainActivity
 import com.kursatmemis.e_ticaret_app.ProductOfCategoryActivity
 import com.kursatmemis.e_ticaret_app.R
+import com.kursatmemis.e_ticaret_app.configs.RetrofitManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class CategoryFragment : Fragment() {
+class CategoryFragment : BaseFragment() {
+    override var dataSource: MutableList<Any> = mutableListOf()
 
-    private lateinit var categoryNamesListView: ListView
-    private var categoryNames = mutableListOf<String>()
-    private lateinit var categoryNamesAdapter: ArrayAdapter<String>
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val categoryFragmentLayout = inflater.inflate(R.layout.fragment_category, container, false)
-        categoryNamesListView = categoryFragmentLayout.findViewById(R.id.categoryNamesListView)
-        getCategoryNames()
-        categoryNamesAdapter = ArrayAdapter<String>(
-            categoryNamesListView.context,
-            android.R.layout.simple_list_item_1,
-            categoryNames
-        )
-        categoryNamesListView.adapter = categoryNamesAdapter
+    override fun setAdapter() {
+        adapter = ArrayAdapter(appContext, R.layout.category_name, dataSource)
+    }
 
+    override fun getLayoutResource(): Int {
+        return R.layout.fragment_category
+    }
 
-        categoryNamesListView.setOnItemClickListener { parent, view, position, id ->
-            val intent = Intent(categoryNamesListView.context, ProductOfCategoryActivity::class.java)
-            intent.putExtra("categoryName", categoryNames[position])
-            startActivity(intent)
+    override fun getListViewResource(): Int {
+        return R.id.categoryNamesListView
+    }
+
+    override fun onListItemClick(position: Int) {
+        val intent = Intent(requireContext(), ProductOfCategoryActivity::class.java)
+        intent.putExtra("categoryName", dataSource[position] as String)
+        startActivity(intent)
+    }
+
+    override fun getDataFromService() {
+        GlobalScope.launch(Dispatchers.Main) {
+            val categoryNames = RetrofitManager.getCategoryNames().toMutableList()
+            for (name in categoryNames) {
+                val result = makeFirstCharUpperCase(name)
+                dataSource.add(result)
+            }
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun makeFirstCharUpperCase(input: String): String {
+        if (input.isEmpty()) {
+            return input
         }
 
-        return categoryFragmentLayout
-    }
-
-    private fun getCategoryNames() {
-        MainActivity.dummyService.getCategoryNames().enqueue(object : Callback<List<String>> {
-            override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
-                val body = response.body()
-                if (body != null) {
-                    categoryNames = body.toMutableList()
-                    updateAdapter()
-                } else {
-                    Log.w("mKm - categoryNames", "Body is null")
-                }
-            }
-
-            override fun onFailure(call: Call<List<String>>, t: Throwable) {
-                Log.w("mKm - categoryNames", "onFailure: $t")
-            }
-
-        })
-    }
-
-    private fun updateAdapter() {
-        categoryNamesAdapter.clear()
-        Log.w("mKm - categoryNames", "geldiler, $categoryNames")
-        categoryNamesAdapter.addAll(categoryNames)
-        categoryNamesAdapter.notifyDataSetChanged()
+        val firstChar = input[0].uppercaseChar()
+        return firstChar + input.substring(1)
     }
 
 }

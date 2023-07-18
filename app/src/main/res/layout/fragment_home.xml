@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".nav_fragments.HomeFragment"
+    android:background="@color/background_color">
 
     <ListView
         android:id="@+id/productsListView"
@@ -16,6 +17,7 @@
         android:layout_marginBottom="1dp"
         android:divider="@color/gray"
         android:dividerHeight="8dp"
+        android:listSelector="@drawable/group_item_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

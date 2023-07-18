@@ -7,14 +7,15 @@ import com.kursatmemis.e_ticaret_app.models.CartToBeAdded
 import com.kursatmemis.e_ticaret_app.models.ProductResponse
 import com.kursatmemis.e_ticaret_app.models.User
 import com.kursatmemis.e_ticaret_app.models.UserData
-import com.kursatmemis.e_ticaret_app.models.UserProfileInfo
-import com.kursatmemis.e_ticaret_app.models.UserDetail
+import com.kursatmemis.e_ticaret_app.models.UserProfileData
+import com.kursatmemis.e_ticaret_app.models.UserAllData
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface DummyService {
 
@@ -34,11 +35,14 @@ interface DummyService {
     fun getCartOfUser(@Path("endpoint") userId: Long): Call<CartOfUserResponse>
 
     @GET("users/{endpoint}")
-    fun getUserInfos(@Path("endpoint") userId: Long = MainActivity.userId): Call<UserDetail>
+    fun getUserAllData(@Path("endpoint") userId: Long = MainActivity.userId): Call<UserAllData>
 
     @PUT("users/{endpoint}")
-    fun updateUserInfo(@Path("endpoint") userId: Long, @Body profileInfo: UserProfileInfo): Call<UserDetail>
+    fun updateUserInfo(@Path("endpoint") userId: Long, @Body profileInfo: UserProfileData): Call<UserAllData>
 
     @POST("carts/add")
     fun addNewCart(@Body cartToBeAdded: CartToBeAdded): Call<AddedToBeCartResponse>
+
+    @GET("products/search")
+    fun searchProduct(@Query("q") query: String) : Call<ProductResponse>
 }

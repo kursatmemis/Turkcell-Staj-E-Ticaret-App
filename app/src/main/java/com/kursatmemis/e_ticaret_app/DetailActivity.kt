@@ -54,7 +54,7 @@ class DetailActivity : AppCompatActivity() {
         val stock = product.stock
         val brand = product.brand
         val category = product.category
-        val price = "${product.price} TL"
+        val price = "${product.price}$"
         val productId = product.id
 
         titleTextView.text = title

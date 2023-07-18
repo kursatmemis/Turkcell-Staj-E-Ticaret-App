@@ -200,6 +200,9 @@
                     android:id="@+id/birthDateEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:inputType="date"
                     android:maxLines="1" />
 

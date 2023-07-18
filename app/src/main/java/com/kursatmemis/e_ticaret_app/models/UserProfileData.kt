@@ -1,6 +1,6 @@
 package com.kursatmemis.e_ticaret_app.models
 
-data class UserProfileInfo(
+data class UserProfileData(
     val image: String,
     val firstName: String,
     val lastName: String,
