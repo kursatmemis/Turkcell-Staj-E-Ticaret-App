@@ -3,65 +3,66 @@ package com.kursatmemis.e_ticaret_app
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.ListView
+import android.widget.Toast
 import com.kursatmemis.e_ticaret_app.adapters.ProductAdapter
+import com.kursatmemis.e_ticaret_app.databinding.ActivityProductOfCategoryBinding
+import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
 import com.kursatmemis.e_ticaret_app.models.Product
-import com.kursatmemis.e_ticaret_app.models.ProductResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ProductOfCategoryActivity : AppCompatActivity() {
 
-    private lateinit var productsOfCategoryListView: ListView
+    private lateinit var binding: ActivityProductOfCategoryBinding
     private lateinit var productsOfCategoryAdapter: ProductAdapter
-    private var productsOfCategory = mutableListOf<Product>()
+    private var productsOfCategoryList = mutableListOf<Product>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_product_of_category)
+        binding = ActivityProductOfCategoryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setAdapter()
 
-        productsOfCategoryListView = findViewById(R.id.productsOfCategoryListView)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val categoryName = intent.getStringExtra("categoryName")
-        getProductsOfCategory(categoryName)
-        productsOfCategoryAdapter = ProductAdapter(productsOfCategoryListView.context, productsOfCategory)
-        productsOfCategoryListView.adapter = productsOfCategoryAdapter
 
-        productsOfCategoryListView.setOnItemClickListener { parent, view, position, id ->
+        RetrofitManager.getProductsOfCategory(categoryName, object : RetrofitManager.CallBack<MutableList<Product>> {
+            override fun onSuccess(data: MutableList<Product>) {
+                productsOfCategoryList = data
+                updateAdapter()
+            }
+
+            override fun onFailure() {
+                Toast.makeText(this@ProductOfCategoryActivity, "Error.", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
+        binding.productsOfCategoryListView.setOnItemClickListener { parent, view, position, id ->
             val intent = Intent(this, DetailActivity::class.java)
-            intent.putExtra("product", productsOfCategory[position])
+            intent.putExtra("product", productsOfCategoryList[position])
             startActivity(intent)
         }
 
     }
 
-    private fun getProductsOfCategory(categoryName: String?) {
-        MainActivity.dummyService.getProductsOfCategory(categoryName!!).enqueue(object : Callback<ProductResponse> {
-            override fun onResponse(
-                call: Call<ProductResponse>,
-                response: Response<ProductResponse>
-            ) {
-                val body = response.body()
-                if (body != null) {
-                    productsOfCategory = body.products.toMutableList()
-                    updateAdapter()
-                    Log.w("mKm - getProducts", "Body: $productsOfCategory")
-                } else {
-                    Log.w("mKm - getProducts", "Body is null.")
-                }
-            }
-
-            override fun onFailure(call: Call<ProductResponse>, t: Throwable) {
-                Log.w("mKm - getProducts", "onFailure: $t")
-            }
-
-        })
+    private fun setAdapter() {
+        productsOfCategoryAdapter =
+            ProductAdapter(this@ProductOfCategoryActivity, productsOfCategoryList)
+        binding.productsOfCategoryListView.adapter = productsOfCategoryAdapter
     }
 
     private fun updateAdapter() {
         productsOfCategoryAdapter.clear()
-        productsOfCategoryAdapter.addAll(productsOfCategory)
+        productsOfCategoryAdapter.addAll(productsOfCategoryList)
         productsOfCategoryAdapter.notifyDataSetChanged()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

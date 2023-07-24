@@ -1,25 +1,13 @@
 package com.kursatmemis.e_ticaret_app.nav_fragments
 
 import android.content.Intent
-import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.ListView
-import com.kursatmemis.e_ticaret_app.MainActivity
 import com.kursatmemis.e_ticaret_app.ProductOfCategoryActivity
 import com.kursatmemis.e_ticaret_app.R
-import com.kursatmemis.e_ticaret_app.configs.RetrofitManager
+import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-
 class CategoryFragment : BaseFragment() {
     override var dataSource: MutableList<Any> = mutableListOf()
 
@@ -42,7 +30,8 @@ class CategoryFragment : BaseFragment() {
     }
 
     override fun getDataFromService() {
-        GlobalScope.launch(Dispatchers.Main) {
+        val scope = CoroutineScope(Dispatchers.Main)
+        scope.launch {
             val categoryNames = RetrofitManager.getCategoryNames().toMutableList()
             for (name in categoryNames) {
                 val result = makeFirstCharUpperCase(name)

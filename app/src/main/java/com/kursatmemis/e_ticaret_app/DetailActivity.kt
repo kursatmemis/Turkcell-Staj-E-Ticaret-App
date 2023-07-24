@@ -1,110 +1,107 @@
 package com.kursatmemis.e_ticaret_app
 
-import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.kursatmemis.e_ticaret_app.databinding.ActivityDetailBinding
+import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
+import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
 import com.kursatmemis.e_ticaret_app.models.AddedToBeCartResponse
-import com.kursatmemis.e_ticaret_app.models.AddedToBeProduct
+import com.kursatmemis.e_ticaret_app.models.ProductToBeAdded
 import com.kursatmemis.e_ticaret_app.models.CartToBeAdded
 import com.kursatmemis.e_ticaret_app.models.Product
-import me.relex.circleindicator.CircleIndicator
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.shashank.sony.fancytoastlib.FancyToast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class DetailActivity : AppCompatActivity() {
-    private var currentIndex = 0 // Geçerli resmin dizideki indeksi
-    private lateinit var titleTextView: TextView
-    private lateinit var brandTextView: TextView
-    private lateinit var stockTextView: TextView
-    private lateinit var descriptionTextView: TextView
-    private lateinit var categoryTextView: TextView
-    private lateinit var priceTextView: TextView
-    private lateinit var addToCartButton: Button
 
+    private lateinit var binding: ActivityDetailBinding
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
-        titleTextView = findViewById(R.id.titleTextView)
-        descriptionTextView = findViewById(R.id.descriptionTextView)
-        stockTextView = findViewById(R.id.stockTextView)
-        brandTextView = findViewById(R.id.brandTextView)
-        categoryTextView = findViewById(R.id.categoryTextView)
-        priceTextView = findViewById(R.id.priceTextView)
-        addToCartButton = findViewById(R.id.addToCartButton)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val product = intent.getSerializableExtra("product") as Product
-        val images = product.images
-        val title = product.title
-        val description = product.description
-        val stock = product.stock
-        val brand = product.brand
-        val category = product.category
-        val price = "${product.price}$"
-        val productId = product.id
+        initViews(product)
+        setupViewPager(product.images)
 
-        titleTextView.text = title
-        descriptionTextView.text = description
-        stockTextView.text = stock.toString()
-        brandTextView.text = brand
-        categoryTextView.text = category
-        priceTextView.text = price
-
-        val viewPager = findViewById<ViewPager>(R.id.viewPager)
-        val indicator = findViewById<CircleIndicator>(R.id.indicator)
-
-        val adapter = ImagePagerAdapter(images)
-        viewPager.adapter = adapter
-        indicator.setViewPager(viewPager)
-
-
-        addToCartButton.setOnClickListener{
-            addNewCart(productId)
+        binding.addToCartButton.setOnClickListener {
+            var message: String
+            var fancyType: Int
+            if (MainActivity.isServiceLogin) {
+                val scope = CoroutineScope(Dispatchers.Main)
+                scope.launch {
+                    val result = addProductToCartWithService(product.id)
+                    if (result != null) {
+                        message = "The produces added to cart successfully."
+                        fancyType = FancyToast.INFO
+                        showFancyToast(message, fancyType)
+                    } else {
+                        message = "The product could not be added to the cart."
+                        fancyType = FancyToast.INFO
+                        showFancyToast(message, fancyType)
+                    }
+                }
+            } else {
+                addProductToCartWithFirebase(product)
+            }
         }
 
     }
 
-    private fun addNewCart(productId: Long) {
-        val addedToBeProduct = AddedToBeProduct(productId, 1)
-        val products = mutableListOf<AddedToBeProduct>()
-        products.add(addedToBeProduct)
-        val cartToBeAdded = CartToBeAdded(MainActivity.userId.toLong(), products)
-        MainActivity.dummyService.addNewCart(cartToBeAdded).enqueue(object : Callback<AddedToBeCartResponse>{
-            override fun onResponse(
-                call: Call<AddedToBeCartResponse>,
-                response: Response<AddedToBeCartResponse>
-            ) {
-                val body = response.body()
-                if (body != null) {
-                    Toast.makeText(priceTextView.context, "The product added to cart successfully.", Toast.LENGTH_SHORT).show()
-                    Log.w("mKm - addNewCart", body.toString())
-                }
-                 else {
-                    Log.w("mKm - addNewCart", "Body is null.")
-                }
-            }
-
-            override fun onFailure(call: Call<AddedToBeCartResponse>, t: Throwable) {
-                Log.w("mKm - addNewCart", "onFailure: $t")
-            }
-
-        })
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 
+    private fun showFancyToast(message: String, fancyType: Int) {
+        FancyToast.makeText(this@DetailActivity, message, FancyToast.LENGTH_SHORT, fancyType, false).show()
+    }
+
+    private fun setupViewPager(images: List<String>) {
+        val viewPager = binding.viewPager
+        val indicator = binding.indicator
+        val adapter = ImagePagerAdapter(images)
+        viewPager.adapter = adapter
+        indicator.setViewPager(viewPager)
+    }
+
+    private fun initViews(product: Product) {
+        binding.titleTextView.text = product.title
+        binding.descriptionTextView.text = product.description
+        binding.stockTextView.text = product.stock.toString()
+        binding.brandTextView.text = product.brand
+        binding.categoryTextView.text = product.category
+        binding.priceTextView.text = "${product.price}$"
+    }
+
+    private fun addProductToCartWithFirebase(product: Product) {
+        val message = "The produces added to cart successfully."
+        val fancyType = FancyToast.INFO
+        showFancyToast(message, fancyType)
+        FirebaseManager.addProductToCart(product)
+    }
+
+    private suspend fun addProductToCartWithService(productId: Long): AddedToBeCartResponse? {
+        val productToBeAdded = ProductToBeAdded(productId, 1)
+        val products = mutableListOf<ProductToBeAdded>()
+        products.add(productToBeAdded)
+        val cartToBeAdded = CartToBeAdded(MainActivity.userId!!.toLong(), products)
+        return RetrofitManager.addProductToCart(cartToBeAdded)
+    }
 
     private inner class ImagePagerAdapter(private val imageUrls: List<String>) : PagerAdapter() {
 
@@ -131,5 +128,6 @@ class DetailActivity : AppCompatActivity() {
             return imageUrls.size
         }
     }
+
 
 }

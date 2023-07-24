@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="background_color">#28282B</color>
     <color name="gray">#808080</color>
-    <color name="light_gray">#ECECEC</color>
     <color name="blue">#055C9D</color>
-    <color name="baby_blue">#D4F1F4</color>
+
+    <color name="backgroundColor">#FFFFFFFF</color>
+    <color name="titleColorLogin">#3B5999</color>
+    <color name="buttonColorLogin">#3B5999</color>
+    <color name="textColor">#28282B</color>
+
+
+    <color name="divider_color">#ECECEC</color>
+
+    <color name="light_gray">#ECECEC</color>
+
+    <color name="baby_blue">#2196F3</color>
     <color name="blue_gorotto">#2E8BC0</color>
+    <color name="colorPrimary">#6750A4</color>
+    <color name="mtrl_textinput_default_box_stroke_color" >#808080</color>
+
+
 </resources>

@@ -4,21 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#28282B"
+    android:background="@color/backgroundColor"
     tools:context=".DetailActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/Theme.ETicaretApp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         app:layout_constraintBottom_toTopOf="@+id/indicator"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <me.relex.circleindicator.CircleIndicator
         android:id="@+id/indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="3dp"
+        app:ci_drawable="@drawable/circleindicator_round"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewPager" />
@@ -31,7 +43,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="45dp"
         android:text="Product Title"
-        android:textColor="@color/white"
+        android:textColor="@color/textColor"
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/priceTextView"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Description:"
-                android:textColor="@color/white" />
+                android:textColor="@color/textColor" />
         </LinearLayout>
 
         <TextView
@@ -67,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView"
-            android:textColor="@color/white" />
+            android:textColor="@color/textColor" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -79,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Category:"
-                android:textColor="@color/white" />
+                android:textColor="@color/textColor" />
         </LinearLayout>
 
         <TextView
@@ -87,7 +99,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView"
-            android:textColor="@color/white" />
+            android:textColor="@color/textColor" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -99,7 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Brand:"
-                android:textColor="@color/white" />
+                android:textColor="@color/textColor" />
         </LinearLayout>
 
         <TextView
@@ -107,7 +119,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView"
-            android:textColor="@color/white" />
+            android:textColor="@color/textColor" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -119,7 +131,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Stock:"
-                android:textColor="@color/white" />
+                android:textColor="@color/textColor" />
         </LinearLayout>
 
         <TextView
@@ -127,7 +139,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView"
-            android:textColor="@color/white" />
+            android:textColor="@color/textColor" />
     </LinearLayout>
 
     <Button
@@ -135,6 +147,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add To Cart"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -148,7 +161,7 @@
         android:layout_marginEnd="20dp"
         android:text="Price"
         android:textSize="24sp"
-        android:textColor="@color/white"
+        android:textColor="@color/textColor"
         app:layout_constraintBottom_toBottomOf="@+id/titleTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/titleTextView" />

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="backgroundColor">#28282B</color>
+    <color name="titleColorLogin">@color/white</color>
+    <color name="buttonColorLogin">#3B5999</color>
+    <color name="textColor">#FFFFFFFF</color>
+
+    <color name="divider_color">#808080</color>
+    <color name="gray">#808080</color>
+    <color name="light_gray">#ECECEC</color>
+
+    <color name="blue">#055C9D</color>
+    <color name="baby_blue">#D4F1F4</color>
+    <color name="blue_gorotto">#2E8BC0</color>
+    <color name="colorPrimary">#6750A4</color>
+    <color name="mtrl_textinput_default_box_stroke_color">#808080</color>
+
+
+</resources>

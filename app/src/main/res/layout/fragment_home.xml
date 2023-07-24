@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".nav_fragments.HomeFragment"
-    android:background="@color/background_color">
+    android:background="@color/backgroundColor">
 
     <ListView
         android:id="@+id/productsListView"
@@ -15,7 +15,7 @@
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
-        android:divider="@color/gray"
+        android:divider="@color/divider_color"
         android:dividerHeight="8dp"
         android:listSelector="@drawable/group_item_selector"
         app:layout_constraintBottom_toBottomOf="parent"

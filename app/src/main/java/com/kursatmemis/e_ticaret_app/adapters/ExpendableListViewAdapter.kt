@@ -10,34 +10,39 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.kursatmemis.e_ticaret_app.R
-import com.kursatmemis.e_ticaret_app.models.ProductOfCart
+import com.kursatmemis.e_ticaret_app.models.ProductInCart
 
 
 class ExpandableListAdapter(
     private val context: Context,
-    private var listDataHeader: List<String>,
-    private var listDataChild: List<ProductOfCart>
+    private var headers: MutableList<String?>,
+    private var children: MutableList<ProductInCart>
 ) : BaseExpandableListAdapter() {
 
-    fun setData(headers: List<String>, children: MutableList<ProductOfCart>) {
-        listDataHeader = headers
-        listDataChild = children
+    fun clear() {
+        headers.clear()
+        children.clear()
     }
 
-    override fun getGroup(groupPosition: Int): String {
-        return listDataHeader[groupPosition]
+    fun addAll(headers: MutableList<String?>, children: List<ProductInCart>) {
+        this.headers.addAll(headers)
+        this.children.addAll(children)
     }
 
-    override fun getChild(groupPosition: Int, childPosition: Int): ProductOfCart {
-        return listDataChild[groupPosition]
+    override fun getGroup(groupPosition: Int): String? {
+        return headers[groupPosition]
+    }
+
+    override fun getChild(groupPosition: Int, childPosition: Int): ProductInCart {
+        return children[groupPosition]
     }
 
     override fun getGroupCount(): Int {
-        return listDataHeader.size
+        return headers.size
     }
 
     override fun getChildrenCount(groupPosition: Int): Int {
-        return 1
+        return headers.size
     }
 
     override fun getGroupId(groupPosition: Int): Long {
@@ -65,7 +70,7 @@ class ExpandableListAdapter(
         val titleTextView = view.findViewById<TextView>(R.id.productTitleTextView)
         titleTextView.text = headerTitle
 
-        groupIndicatorImageView.setColorFilter(ContextCompat.getColor(context, if (isExpanded) R.color.blue_gorotto else R.color.white), PorterDuff.Mode.SRC_IN)
+        groupIndicatorImageView.setColorFilter(ContextCompat.getColor(context, if (isExpanded) R.color.blue_gorotto else R.color.textColor), PorterDuff.Mode.SRC_IN)
         groupIndicatorImageView.rotation = if (isExpanded) 180f else 0f
         return view
     }
@@ -98,4 +103,6 @@ class ExpandableListAdapter(
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
         return true
     }
+
+
 }

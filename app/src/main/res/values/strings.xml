@@ -3,9 +3,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="enter_your_username">Enter your username</string>
+    <string name="enter_your_username">Enter your username or email</string>
     <string name="enter_your_password">Enter your password</string>
-    <string name="log_in">Log In</string>
+    <string name="log_in">Log-In</string>
     <string name="product_image">Product Image</string>
     <string name="product_title">Product Title</string>
     <string name="product_description">Product Description</string>
@@ -16,4 +16,13 @@
     <string name="logo">Logo</string>
     <string name="enter_a_keyword">Enter a keyword</string>
     <string name="child_item">Child Item</string>
+    <string name="click_on_item_to_show_the_details">Click on item to show the details...\nLong press to remove the element from the cart.</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="register">Register</string>
+    <string name="sign_in">Sign-In</string>
+    <string name="don_t_you_have_an_account">Don\'t you have an account?</string>
+    <string name="logout">Logout</string>
+    <string name="change_to_dark_light">Change to Dark/Light</string>
+    <string name="or">or</string>
+    <string name="login_as_random_user">Login as random user</string>
 </resources>

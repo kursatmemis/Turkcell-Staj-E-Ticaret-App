@@ -1,20 +1,16 @@
 package com.kursatmemis.e_ticaret_app.nav_fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import com.kursatmemis.e_ticaret_app.DetailActivity
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.adapters.ProductAdapter
-import com.kursatmemis.e_ticaret_app.configs.RetrofitManager
+import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
 import com.kursatmemis.e_ticaret_app.models.Product
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -58,12 +54,6 @@ class SearchFragment: BaseFragment() {
 
     override fun getListViewResource(): Int {
        return R.id.searchListView
-    }
-
-    override fun onListItemClick(position: Int) {
-        val intent = Intent(requireContext(), DetailActivity::class.java)
-        intent.putExtra("product", dataSource[position] as Product)
-        startActivity(intent)
     }
 
     override fun getDataFromService() {

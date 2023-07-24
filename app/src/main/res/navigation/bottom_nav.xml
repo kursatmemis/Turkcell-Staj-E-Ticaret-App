@@ -17,9 +17,9 @@
         tools:layout="@layout/fragment_search" />
     <fragment
         android:id="@+id/myOrdersFragment"
-        android:name="com.kursatmemis.e_ticaret_app.nav_fragments.MyOrdersFragment"
+        android:name="com.kursatmemis.e_ticaret_app.nav_fragments.MyCartFragment"
         android:label="fragment_my_orders"
-        tools:layout="@layout/fragment_my_orders" />
+        tools:layout="@layout/fragment_my_cart" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.kursatmemis.e_ticaret_app.nav_fragments.ProfileFragment"

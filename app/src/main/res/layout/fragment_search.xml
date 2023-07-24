@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_color"
+    android:background="@color/backgroundColor"
     tools:context=".nav_fragments.SearchFragment">
 
     <ListView
@@ -15,7 +15,7 @@
         android:layout_marginTop="150dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
-        android:divider="@color/gray"
+        android:divider="@color/divider_color"
         android:dividerHeight="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +33,7 @@
         android:ems="10"
         android:hint="@string/enter_a_keyword"
         android:inputType="text"
-        android:textColor="@color/white"
+        android:textColor="@color/textColor"
         android:textColorHint="@color/gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -45,6 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Search"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/searchListView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

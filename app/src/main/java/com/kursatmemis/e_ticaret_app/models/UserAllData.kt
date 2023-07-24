@@ -31,16 +31,16 @@ data class UserAllData (
 )
 
 data class Address (
-    val address: String,
-    val city: String,
-    val coordinates: Coordinates,
-    val postalCode: String,
-    val state: String
+    val address: String?="",
+    val city: String?="",
+    val coordinates: Coordinates?=Coordinates(0.0, 0.0),
+    val postalCode: String?="",
+    val state: String?=""
 )
 
 data class Coordinates (
-    val lat: Double,
-    val lng: Double
+    val lat: Double?=0.0,
+    val lng: Double?=0.0
 )
 
 data class Bank (

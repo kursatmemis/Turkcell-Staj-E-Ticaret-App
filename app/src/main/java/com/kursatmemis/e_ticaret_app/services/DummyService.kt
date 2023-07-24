@@ -4,6 +4,7 @@ import com.kursatmemis.e_ticaret_app.MainActivity
 import com.kursatmemis.e_ticaret_app.models.AddedToBeCartResponse
 import com.kursatmemis.e_ticaret_app.models.CartOfUserResponse
 import com.kursatmemis.e_ticaret_app.models.CartToBeAdded
+import com.kursatmemis.e_ticaret_app.models.GetAllUserResponse
 import com.kursatmemis.e_ticaret_app.models.ProductResponse
 import com.kursatmemis.e_ticaret_app.models.User
 import com.kursatmemis.e_ticaret_app.models.UserData
@@ -35,7 +36,7 @@ interface DummyService {
     fun getCartOfUser(@Path("endpoint") userId: Long): Call<CartOfUserResponse>
 
     @GET("users/{endpoint}")
-    fun getUserAllData(@Path("endpoint") userId: Long = MainActivity.userId): Call<UserAllData>
+    fun getUserAllData(@Path("endpoint") userId: Long = MainActivity.userId!!.toLong()): Call<UserAllData>
 
     @PUT("users/{endpoint}")
     fun updateUserInfo(@Path("endpoint") userId: Long, @Body profileInfo: UserProfileData): Call<UserAllData>
@@ -45,4 +46,9 @@ interface DummyService {
 
     @GET("products/search")
     fun searchProduct(@Query("q") query: String) : Call<ProductResponse>
+
+    @GET("users")
+    fun getAllUsers(): Call<GetAllUserResponse>
+
 }
+

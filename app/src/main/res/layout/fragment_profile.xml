@@ -17,17 +17,18 @@
             android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            app:collapsedTitleTextColor="@color/black"
+            app:collapsedTitleTextColor="@color/textColor"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="Profile">
+            app:title="Profile"
+            app:expandedTitleTextColor="@color/textColor">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+                app:popupTheme="@style/Theme.ETicaretApp" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -46,8 +47,8 @@
 
             <ImageView
                 android:id="@+id/imageImageView"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -57,7 +58,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/filledTextFieldName"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -73,6 +74,7 @@
                     android:id="@+id/nameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:inputType="text"
                     android:maxLines="1" />
 
@@ -81,7 +83,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/filledTextFieldSurname"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -103,7 +105,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/filledTextFieldEmail"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="0dp"
                 android:layout_height="64dp"
                 android:layout_marginTop="10dp"
@@ -123,7 +125,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/filledTextFieldPhone"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="0dp"
                 android:layout_height="64dp"
                 android:layout_marginTop="10dp"
@@ -144,7 +146,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/filledTextFieldCity"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="0dp"
                 android:layout_height="64dp"
                 android:layout_marginTop="10dp"
@@ -165,7 +167,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/filledTextFieldAddress"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="0dp"
                 android:layout_height="64dp"
                 android:layout_marginTop="10dp"
@@ -186,7 +188,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/filledTextFieldBirhDate"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="0dp"
                 android:layout_height="64dp"
                 android:layout_marginTop="10dp"
@@ -238,6 +240,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="50dp"
                 android:text="Save"
+                android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
                 app:layout_constraintHorizontal_bias="0.0"

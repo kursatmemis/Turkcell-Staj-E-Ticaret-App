@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "25015767400",
+    "project_id": "turkcell-staj-e-ticaret-app",
+    "storage_bucket": "turkcell-staj-e-ticaret-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25015767400:android:16bb74ebaa5073efa0c6dd",
+        "android_client_info": {
+          "package_name": "com.kursatmemis.e_ticaret_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "25015767400-qn3o6qlvjak1bs0ojibbksup5l17v9v6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA68I8Ls9wqX2oCvbbDQaPQ4_5xFjjyz3M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "25015767400-qn3o6qlvjak1bs0ojibbksup5l17v9v6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

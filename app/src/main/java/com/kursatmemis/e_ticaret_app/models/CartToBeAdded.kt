@@ -2,10 +2,10 @@ package com.kursatmemis.e_ticaret_app.models
 
 data class CartToBeAdded(
     val userId: Long,
-    val products: List<AddedToBeProduct>
+    val products: List<ProductToBeAdded>
 )
 
-data class AddedToBeProduct(
+data class ProductToBeAdded(
     val id: Long,
     val quantity: Long
 )
