@@ -1,4 +1,4 @@
-package com.kursatmemis.e_ticaret_app
+package com.kursatmemis.e_ticaret_app.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.databinding.ActivityMainBinding
 import com.kursatmemis.e_ticaret_app.managers.SharedPrefManager
 
@@ -102,12 +103,6 @@ class MainActivity : AppCompatActivity() {
 
         NavigationUI.setupWithNavController(binding.bottomNav, navHostFragment.navController)
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressedDispatcher.onBackPressed()
-        return true
     }
 
 }

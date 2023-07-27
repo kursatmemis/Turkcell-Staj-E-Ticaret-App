@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
-import com.kursatmemis.e_ticaret_app.DetailActivity
+import com.kursatmemis.e_ticaret_app.activities.DetailActivity
 import com.kursatmemis.e_ticaret_app.models.Product
 
 abstract class BaseFragment : Fragment() {
@@ -28,7 +28,7 @@ abstract class BaseFragment : Fragment() {
         setAdapter()
         listView = fragmentLayout.findViewById(getListViewResource())
         listView.adapter = adapter
-        getDataFromService()
+        getDataFromServiceOrFirebase()
 
         listView.setOnItemClickListener { parent, view, position, id ->
             onListItemClick(position)
@@ -52,7 +52,7 @@ abstract class BaseFragment : Fragment() {
     abstract fun setAdapter()
     abstract fun getLayoutResource(): Int
     abstract fun getListViewResource(): Int
-    abstract fun getDataFromService()
+    abstract fun getDataFromServiceOrFirebase()
 
 }
 

@@ -25,4 +25,23 @@
     <string name="change_to_dark_light">Change to Dark/Light</string>
     <string name="or">or</string>
     <string name="login_as_random_user">Login as random user</string>
+    <string name="click_to_change_your_email_or_password">Click to change your email or password</string>
+    <string name="update">Update</string>
+    <string name="password">Password</string>
+    <string name="_username">Username</string>
+    <string name="results">Results</string>
+    <string name="resend_email_for_verification">Resend email for verification.</string>
+    <string name="send">Send</string>
+    <string name="i_forgot_my_password">I forgot my password</string>
+    <string name="reset_your_password">Reset Your Password</string>
+    <string name="reset_your_password_via_your_email_address_or_username">Reset your password via your email address or username</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="description">Description</string>
+    <string name="remove_product_from_the_cart">Remove product from the cart</string>
+    <string name="price">Price</string>
+    <string name="user_full_name">User Full Name</string>
+    <string name="comment">Comment</string>
+    <string name="please_write_your_review_about_the_product">Please write your review about the product</string>
+    <string name="write_your_comment_review_here">Write your comment/review here.</string>
+    <string name="submit_comment_review">Submit Comment/Review</string>
 </resources>

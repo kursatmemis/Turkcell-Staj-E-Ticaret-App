@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:numberpicker="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/removeProductFromCartImageView"
+        android:layout_width="24sp"
+        android:layout_height="24sp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/ic_remove_product"
+        android:text="@string/remove_product_from_the_cart"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/priceTextView"
+        app:layout_constraintStart_toStartOf="@+id/priceTextView"
+        app:layout_constraintTop_toBottomOf="@+id/priceTextView" />
+
+    <ImageView
+        android:id="@+id/productImageImageView"
+        android:layout_width="80dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/productTitleTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginStart="8dp"
+        android:text="Title"
+        android:textColor="@color/textColor"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/productImageImageView"
+        app:layout_constraintTop_toTopOf="@+id/productImageImageView" />
+
+    <TextView
+        android:id="@+id/productDescriptionTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="@string/description"
+        android:textColor="@color/textColor"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="@+id/productTitleTextView"
+        app:layout_constraintStart_toStartOf="@+id/productTitleTextView"
+        app:layout_constraintTop_toBottomOf="@+id/productTitleTextView" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="130dp"
+        android:layout_height="40dp"
+        android:background="@color/backgroundColor"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/productImageImageView"
+        app:layout_constraintStart_toStartOf="@+id/productTitleTextView">
+
+        <Button
+            android:id="@+id/decrementButton"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:backgroundTint="@color/gray"
+            android:clickable="false"
+            android:focusable="false"
+            android:padding="0dp"
+            android:text="—"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/countTextView"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:background="@color/backgroundColor"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="@color/textColor" />
+
+        <Button
+            android:id="@+id/incrementButton"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:backgroundTint="@color/colorPrimary"
+            android:focusable="false"
+            android:padding="0dp"
+            android:text="+"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/priceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/price"
+        android:textColor="@color/textColor"
+        android:textStyle="italic"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="@+id/productTitleTextView"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout2" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

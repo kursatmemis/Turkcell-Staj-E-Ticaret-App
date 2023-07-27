@@ -1,271 +1,264 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/backgroundColor">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbarLayout"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            app:collapsedTitleTextColor="@color/textColor"
-            app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="Profile"
-            app:expandedTitleTextColor="@color/textColor">
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/Theme.ETicaretApp" />
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+                android:layout_height="match_parent">
 
 
-    </com.google.android.material.appbar.AppBarLayout>
+                <ImageView
+                    android:id="@+id/imageImageView"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@tools:sample/avatars" />
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/light_gray">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/filledTextFieldName"
+                    style="@style/TextInputLayoutStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="4dp"
+                    android:hint="Name"
+                    app:layout_constraintEnd_toStartOf="@+id/filledTextFieldSurname"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageImageView">
 
-            <ImageView
-                android:id="@+id/imageImageView"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@tools:sample/avatars" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/nameEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/filledTextFieldName"
-                style="@style/TextInputLayoutStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="4dp"
-                android:hint="Name"
-                app:layout_constraintEnd_toStartOf="@+id/filledTextFieldSurname"
-                app:layout_constraintHorizontal_chainStyle="spread"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageImageView">
+                        android:inputType="text"
+                        android:maxLines="1" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/nameEditText"
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/filledTextFieldSurname"
+                    style="@style/TextInputLayoutStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="4dp"
+                    android:hint="Surname"
+                    app:layout_constraintBottom_toBottomOf="@+id/filledTextFieldName"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/filledTextFieldName"
+                    app:layout_constraintTop_toTopOf="@+id/filledTextFieldName">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/surnameEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/filledTextFieldEmail"
+                    style="@style/TextInputLayoutStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="10dp"
+                    android:hint="Email"
+                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldSurname"
+                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldName"
+                    app:layout_constraintTop_toBottomOf="@id/filledTextFieldName">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/emailEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/filledTextFieldPhone"
+                    style="@style/TextInputLayoutStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="10dp"
+                    android:hint="Phone"
+                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintHorizontal_bias="0.416"
+                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintTop_toBottomOf="@+id/filledTextFieldEmail">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/phoneEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/filledTextFieldCity"
+                    style="@style/TextInputLayoutStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="10dp"
+                    android:hint="City"
+                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintHorizontal_bias="0.416"
+                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintTop_toBottomOf="@+id/filledTextFieldPhone">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/cityEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/filledTextFieldAddress"
+                    style="@style/TextInputLayoutStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="10dp"
+                    android:hint="Address"
+                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintHorizontal_bias="0.416"
+                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintTop_toBottomOf="@+id/filledTextFieldCity">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/addressEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/filledTextFieldBirhDate"
+                    style="@style/TextInputLayoutStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="10dp"
+                    android:hint="Birth Date"
+                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintHorizontal_bias="0.416"
+                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintTop_toBottomOf="@+id/filledTextFieldAddress">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/birthDateEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:inputType="date"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <RadioGroup
+                    android:id="@+id/genderRadioGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@+id/filledTextFieldBirhDate"
+                    tools:layout_editor_absoluteX="-124dp">
 
-                    android:inputType="text"
-                    android:maxLines="1" />
+                    <RadioButton
+                        android:id="@+id/maleRadioButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Male" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <RadioButton
+                        android:id="@+id/femaleRadioButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Female" />
 
+                </RadioGroup>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/filledTextFieldSurname"
-                style="@style/TextInputLayoutStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="4dp"
-                android:hint="Surname"
-                app:layout_constraintBottom_toBottomOf="@+id/filledTextFieldName"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/filledTextFieldName"
-                app:layout_constraintTop_toTopOf="@+id/filledTextFieldName">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/surnameEditText"
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/saveButton"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="1" />
+                    android:layout_marginTop="30dp"
+                    android:layout_marginBottom="30dp"
+                    android:text="Save"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toTopOf="@+id/changeEmailAndPasswordTextView"
+                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintTop_toBottomOf="@+id/genderRadioGroup" />
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/filledTextFieldEmail"
-                style="@style/TextInputLayoutStyle"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:layout_marginTop="10dp"
-                android:hint="Email"
-                app:layout_constraintEnd_toEndOf="@+id/filledTextFieldSurname"
-                app:layout_constraintStart_toStartOf="@+id/filledTextFieldName"
-                app:layout_constraintTop_toBottomOf="@id/filledTextFieldName">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/emailEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/filledTextFieldPhone"
-                style="@style/TextInputLayoutStyle"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:layout_marginTop="10dp"
-                android:hint="Phone"
-                app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
-                app:layout_constraintHorizontal_bias="0.416"
-                app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
-                app:layout_constraintTop_toBottomOf="@+id/filledTextFieldEmail">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/phoneEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/filledTextFieldCity"
-                style="@style/TextInputLayoutStyle"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:layout_marginTop="10dp"
-                android:hint="City"
-                app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
-                app:layout_constraintHorizontal_bias="0.416"
-                app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
-                app:layout_constraintTop_toBottomOf="@+id/filledTextFieldPhone">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/cityEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/filledTextFieldAddress"
-                style="@style/TextInputLayoutStyle"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:layout_marginTop="10dp"
-                android:hint="Address"
-                app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
-                app:layout_constraintHorizontal_bias="0.416"
-                app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
-                app:layout_constraintTop_toBottomOf="@+id/filledTextFieldCity">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/addressEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/filledTextFieldBirhDate"
-                style="@style/TextInputLayoutStyle"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:layout_marginTop="10dp"
-                android:hint="Birth Date"
-                app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
-                app:layout_constraintHorizontal_bias="0.416"
-                app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
-                app:layout_constraintTop_toBottomOf="@+id/filledTextFieldAddress">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/birthDateEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:inputType="date"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <RadioGroup
-                android:id="@+id/genderRadioGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/filledTextFieldBirhDate"
-                tools:layout_editor_absoluteX="-124dp">
-
-                <RadioButton
-                    android:id="@+id/maleRadioButton"
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Male" />
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <RadioButton
-                    android:id="@+id/femaleRadioButton"
+                <TextView
+                    android:id="@+id/changeEmailAndPasswordTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Female" />
+                    android:layout_marginBottom="50dp"
+                    android:text="@string/click_to_change_your_email_or_password"
+                    android:textColor="@color/buttonColorLogin"
+                    android:textStyle="italic|bold"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent" />
 
-            </RadioGroup>
-
-            <Button
-                android:id="@+id/saveButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="50dp"
-                android:text="Save"
-                android:textColor="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
-                app:layout_constraintTop_toBottomOf="@+id/genderRadioGroup" />
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toTopOf="@+id/filledTextFieldCity"
-                app:layout_constraintEnd_toStartOf="@+id/filledTextFieldPhone"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/filledTextFieldPhone"
-                app:layout_constraintTop_toBottomOf="@+id/filledTextFieldPhone"
-                app:layout_constraintVertical_bias="0.5" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 
 

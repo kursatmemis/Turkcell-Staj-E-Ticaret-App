@@ -1,8 +1,7 @@
-package com.kursatmemis.e_ticaret_app
+package com.kursatmemis.e_ticaret_app.activities
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -13,16 +12,16 @@ import com.bumptech.glide.request.RequestOptions
 import com.kursatmemis.e_ticaret_app.databinding.ActivityDetailBinding
 import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
-import com.kursatmemis.e_ticaret_app.models.AddedToBeCartResponse
 import com.kursatmemis.e_ticaret_app.models.ProductToBeAdded
 import com.kursatmemis.e_ticaret_app.models.CartToBeAdded
 import com.kursatmemis.e_ticaret_app.models.Product
+import com.kursatmemis.e_ticaret_app.models.ProductInCart
 import com.shashank.sony.fancytoastlib.FancyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : BaseActivity() {
 
     private lateinit var binding: ActivityDetailBinding
 
@@ -31,44 +30,31 @@ class DetailActivity : AppCompatActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         val product = intent.getSerializableExtra("product") as Product
         initViews(product)
         setupViewPager(product.images)
 
         binding.addToCartButton.setOnClickListener {
-            var message: String
-            var fancyType: Int
             if (MainActivity.isServiceLogin) {
                 val scope = CoroutineScope(Dispatchers.Main)
                 scope.launch {
-                    val result = addProductToCartWithService(product.id)
-                    if (result != null) {
-                        message = "The produces added to cart successfully."
-                        fancyType = FancyToast.INFO
-                        showFancyToast(message, fancyType)
-                    } else {
-                        message = "The product could not be added to the cart."
-                        fancyType = FancyToast.INFO
-                        showFancyToast(message, fancyType)
-                    }
+                    addProductToCartWithService(product.id)
                 }
             } else {
                 addProductToCartWithFirebase(product)
             }
         }
 
+        binding.commentsTextView.setOnClickListener {
+            goToCommentActivity(product.id)
+        }
+
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressedDispatcher.onBackPressed()
-        return true
-    }
-
-    private fun showFancyToast(message: String, fancyType: Int) {
-        FancyToast.makeText(this@DetailActivity, message, FancyToast.LENGTH_SHORT, fancyType, false).show()
+    private fun goToCommentActivity(productId: Long) {
+        val intent = Intent(this@DetailActivity, CommentActivity::class.java)
+        intent.putExtra("productId", productId)
+        startActivity(intent)
     }
 
     private fun setupViewPager(images: List<String>) {
@@ -91,16 +77,47 @@ class DetailActivity : AppCompatActivity() {
     private fun addProductToCartWithFirebase(product: Product) {
         val message = "The produces added to cart successfully."
         val fancyType = FancyToast.INFO
-        showFancyToast(message, fancyType)
-        FirebaseManager.addProductToCart(product)
+        this.showFancyToast(message, fancyType)
+
+        val productInCart = ProductInCart(
+            product.thumbnail,
+            product.id,
+            product.title,
+            product.description,
+            product.price,
+            1,
+            product.price,
+            product.discountPercentage,
+            calculateDiscountedPrice(product.price, product.discountPercentage).toLong()
+        )
+        FirebaseManager.addProductToCart(productInCart)
     }
 
-    private suspend fun addProductToCartWithService(productId: Long): AddedToBeCartResponse? {
-        val productToBeAdded = ProductToBeAdded(productId, 1)
+    private fun calculateDiscountedPrice(price: Long, discountPercentage: Double): Double {
+        return price - price * (discountPercentage/100.0)
+    }
+
+    private fun addProductToCartWithService(productId: Long) {
         val products = mutableListOf<ProductToBeAdded>()
+        val productToBeAdded = ProductToBeAdded(productId, 1)
         products.add(productToBeAdded)
         val cartToBeAdded = CartToBeAdded(MainActivity.userId!!.toLong(), products)
-        return RetrofitManager.addProductToCart(cartToBeAdded)
+        return RetrofitManager.addProductToCart(
+            cartToBeAdded,
+            object : RetrofitManager.CallBack<Boolean> {
+                override fun onSuccess(data: Boolean) {
+                    val message = "The product added to the cart successfully!"
+                    val type = FancyToast.INFO
+                    this@DetailActivity.showFancyToast(message, type)
+                }
+
+                override fun onFailure(errorMessage: String) {
+                    val message = "Error!"
+                    val type = FancyToast.WARNING
+                    this@DetailActivity.showFancyToast(message, type)
+                }
+
+            })
     }
 
     private inner class ImagePagerAdapter(private val imageUrls: List<String>) : PagerAdapter() {

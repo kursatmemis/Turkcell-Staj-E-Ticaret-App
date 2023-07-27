@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".activities.MainActivity"
     android:background="@color/backgroundColor">
 
     <androidx.appcompat.widget.Toolbar
@@ -27,7 +27,7 @@
         android:layout_marginBottom="1dp"
         android:divider="@color/gray"
         android:dividerHeight="8dp"
-        android:listSelector="@drawable/group_item_selector"
+        android:listSelector="@drawable/item_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

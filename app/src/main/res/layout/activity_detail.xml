@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
-    tools:context=".DetailActivity">
+    tools:context=".activities.DetailActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -146,13 +146,12 @@
         android:id="@+id/addToCartButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimary"
         android:text="Add To Cart"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintBottom_toTopOf="@+id/commentsTextView"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        tools:layout_editor_absoluteX="134dp" />
 
     <TextView
         android:id="@+id/priceTextView"
@@ -160,12 +159,24 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:text="Price"
-        android:textSize="24sp"
         android:textColor="@color/textColor"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/titleTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/titleTextView" />
 
-
+    <TextView
+        android:id="@+id/commentsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Comments about the product"
+        android:textColor="@color/orange"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addToCartButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

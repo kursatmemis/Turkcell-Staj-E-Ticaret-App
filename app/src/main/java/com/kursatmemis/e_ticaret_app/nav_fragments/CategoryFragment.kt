@@ -2,7 +2,7 @@ package com.kursatmemis.e_ticaret_app.nav_fragments
 
 import android.content.Intent
 import android.widget.ArrayAdapter
-import com.kursatmemis.e_ticaret_app.ProductOfCategoryActivity
+import com.kursatmemis.e_ticaret_app.activities.ProductOfCategoryActivity
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
 import kotlinx.coroutines.CoroutineScope
@@ -29,7 +29,7 @@ class CategoryFragment : BaseFragment() {
         startActivity(intent)
     }
 
-    override fun getDataFromService() {
+    override fun getDataFromServiceOrFirebase() {
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
             val categoryNames = RetrofitManager.getCategoryNames().toMutableList()

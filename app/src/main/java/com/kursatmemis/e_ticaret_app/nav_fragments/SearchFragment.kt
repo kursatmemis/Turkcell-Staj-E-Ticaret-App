@@ -1,13 +1,12 @@
 package com.kursatmemis.e_ticaret_app.nav_fragments
 
 import android.os.Bundle
-import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
+import android.widget.SearchView
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.adapters.ProductAdapter
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
@@ -17,16 +16,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class SearchFragment: BaseFragment() {
+class SearchFragment : BaseFragment() {
     override var dataSource: MutableList<Any> = mutableListOf()
-    private lateinit var searchEditText: EditText
-    private lateinit var searchButton: Button
-    private var text: String = "ğ"
-
-    var handler: Handler = Handler()
-    var searchRunnable: Runnable? = null
-    private val SEARCH_DELAY_MILLIS: Long = 800 // 0.8 s
-    private var lastTextChangedTime: Long = 0
+    private lateinit var searchView: SearchView
+    private var text: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,12 +27,25 @@ class SearchFragment: BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         val fragmentLayout = super.onCreateView(inflater, container, savedInstanceState)
-        searchEditText = fragmentLayout!!.findViewById(R.id.searchEditText)
-        searchButton = fragmentLayout!!.findViewById(R.id.searchButton)
-        searchButton.setOnClickListener {
-            text = searchEditText.text.toString()
-            getDataFromService()
-        }
+        searchView = fragmentLayout!!.findViewById(R.id.searchView)
+        searchView.isIconified = false
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                text = query!!
+                getDataFromServiceOrFirebase()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                text = newText!!
+                getDataFromServiceOrFirebase()
+                return true
+            }
+
+        })
+
+
 
         return fragmentLayout
     }
@@ -53,13 +59,19 @@ class SearchFragment: BaseFragment() {
     }
 
     override fun getListViewResource(): Int {
-       return R.id.searchListView
+        return R.id.searchListView
     }
 
-    override fun getDataFromService() {
-        GlobalScope.launch(Dispatchers.Main) {
-            dataSource = RetrofitManager.searchProduct(text).toMutableList()
-            updateAdapter()
+    override fun getDataFromServiceOrFirebase() {
+        Log.w("mKm-ssd", text)
+        if (text.trim().isNotEmpty()) {
+            GlobalScope.launch(Dispatchers.Main) {
+                dataSource = RetrofitManager.searchProduct(text).toMutableList()
+                updateAdapter()
+            }
+        } else {
+            adapter.clear()
+            adapter.notifyDataSetChanged()
         }
 
     }

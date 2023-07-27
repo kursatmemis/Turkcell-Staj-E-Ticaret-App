@@ -2,17 +2,18 @@ package com.kursatmemis.e_ticaret_app.nav_fragments
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import android.widget.Button
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.kursatmemis.e_ticaret_app.MainActivity
+import com.kursatmemis.e_ticaret_app.activities.MainActivity
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
@@ -21,6 +22,7 @@ import com.kursatmemis.e_ticaret_app.models.Address
 import com.kursatmemis.e_ticaret_app.models.ControlResult
 import com.kursatmemis.e_ticaret_app.models.Coordinates
 import com.kursatmemis.e_ticaret_app.models.Date
+import com.kursatmemis.e_ticaret_app.models.UpdatedUser
 import com.kursatmemis.e_ticaret_app.models.UserAllData
 import com.kursatmemis.e_ticaret_app.models.UserProfileData
 import com.shashank.sony.fancytoastlib.FancyToast
@@ -36,6 +38,7 @@ class ProfileFragment : Fragment() {
     private var binding: FragmentProfileBinding? = null
     private lateinit var context: Context
     private var userProfileData: UserProfileData? = null
+    private var userAllData: UserAllData? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +46,6 @@ class ProfileFragment : Fragment() {
     ): View {
         context = inflater.context
         binding = FragmentProfileBinding.inflate(inflater, container, false)
-        setCollapsingToolbarAttriutes()
 
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
@@ -51,7 +53,7 @@ class ProfileFragment : Fragment() {
             val type = FancyToast.ERROR
             showProgressBar()
             if (MainActivity.isServiceLogin) {
-                val userAllData = getUserAllDataFromService()
+                userAllData = getUserAllDataFromService()
                 if (userAllData == null) {
                     showFancyToast(message, type)
                 } else {
@@ -104,7 +106,61 @@ class ProfileFragment : Fragment() {
 
         }
 
+        binding?.changeEmailAndPasswordTextView?.setOnClickListener {
+            showAlertDialog()
+        }
+
         return binding!!.root
+    }
+
+    private fun showAlertDialog() {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Update")
+        val updateDialog = layoutInflater.inflate(R.layout.update_dialog, null)
+        val emailEditText = updateDialog.findViewById<EditText>(R.id.dialogUsernameET)
+        val passwordEditText = updateDialog.findViewById<EditText>(R.id.dialogPasswordET)
+        val updateButton = updateDialog.findViewById<Button>(R.id.dialogUpdateButton)
+
+        if (MainActivity.isServiceLogin) {
+            emailEditText.setText(userAllData?.email)
+            passwordEditText.setText(userAllData?.password)
+        } else {
+            emailEditText.setText(FirebaseManager.auth.currentUser!!.email)
+        }
+        updateButton.setOnClickListener {
+            val newEmail = emailEditText.text.toString()
+            val newPassword = passwordEditText.text.toString()
+            if (MainActivity.isServiceLogin) {
+                val user = UpdatedUser(newEmail, newPassword)
+                RetrofitManager.updateUser(user, object : RetrofitManager.CallBack<UserAllData> {
+                    override fun onSuccess(data: UserAllData) {
+                        showFancyToast("Updated your information.", FancyToast.INFO)
+                    }
+
+                    override fun onFailure(errorMessage: String) {
+                        showFancyToast("Error!", FancyToast.INFO)
+                    }
+
+                })
+            } else {
+                FirebaseManager.updateUser(newEmail, newPassword, object :
+                    FirebaseManager.CallBack<Any?> {
+
+                    override fun onSuccess(data: Any?) {
+                        showFancyToast("Updated your information.", FancyToast.INFO)
+                    }
+
+                    override fun onFailure(errorMessage: String) {
+                        showFancyToast(errorMessage, FancyToast.INFO)
+                    }
+
+                })
+            }
+        }
+
+        builder.setView(updateDialog)
+        builder.show()
+
     }
 
     private fun updateUserProfileAndShowResult(userProfileData: UserProfileData) {
@@ -285,29 +341,6 @@ class ProfileFragment : Fragment() {
 
     private fun showProgressBar() {
         binding?.progressBar?.visibility = View.VISIBLE
-    }
-
-    private fun setCollapsingToolbarAttriutes() {
-        binding?.collapsingToolbarLayout?.setExpandedTitleTypeface(
-            Typeface.create(
-                binding?.collapsingToolbarLayout?.expandedTitleTypeface,
-                Typeface.BOLD
-            )
-        )
-
-        binding?.collapsingToolbarLayout?.setCollapsedTitleTypeface(
-            Typeface.create(
-                binding?.collapsingToolbarLayout?.expandedTitleTypeface,
-                Typeface.BOLD
-            )
-        )
-
-        binding?.collapsingToolbarLayout?.setBackgroundColor(
-            ContextCompat.getColor(
-                context,
-                R.color.backgroundColor
-            )
-        )
     }
 
     override fun onDestroyView() {

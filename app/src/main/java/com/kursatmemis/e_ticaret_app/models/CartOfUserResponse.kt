@@ -18,11 +18,13 @@ data class Cart(
 )
 
 data class ProductInCart(
-    val id: Long? = 0,
-    val title: String? = "",
-    val price: Long? = 0,
-    val quantity: Long? = 0,
-    val total: Long? = 0,
+    var img: String = "",
+    var id: Long? = 0,
+    var title: String? = "",
+    var desc: String? = "",
+    var price: Long? = 0,
+    var quantity: Long? = 0,
+    var total: Long? = 0,
     val discountPercentage: Double? = 0.0,
     val discountedPrice: Long? = 0
 )

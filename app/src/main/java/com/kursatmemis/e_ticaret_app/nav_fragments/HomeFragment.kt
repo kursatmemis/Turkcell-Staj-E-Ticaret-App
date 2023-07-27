@@ -1,6 +1,7 @@
 package com.kursatmemis.e_ticaret_app.nav_fragments
 
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.adapters.ProductAdapter
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
@@ -25,7 +26,7 @@ class HomeFragment : BaseFragment() {
         return R.layout.fragment_home
     }
 
-    override fun getDataFromService() {
+    override fun getDataFromServiceOrFirebase() {
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
             dataSource = RetrofitManager.getAllProducts().toMutableList()

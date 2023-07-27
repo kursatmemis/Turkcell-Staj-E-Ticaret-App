@@ -1,4 +1,4 @@
-package com.kursatmemis.e_ticaret_app
+package com.kursatmemis.e_ticaret_app.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,9 +8,6 @@ import com.kursatmemis.e_ticaret_app.adapters.ProductAdapter
 import com.kursatmemis.e_ticaret_app.databinding.ActivityProductOfCategoryBinding
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
 import com.kursatmemis.e_ticaret_app.models.Product
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class ProductOfCategoryActivity : AppCompatActivity() {
 
@@ -35,7 +32,7 @@ class ProductOfCategoryActivity : AppCompatActivity() {
                 updateAdapter()
             }
 
-            override fun onFailure() {
+            override fun onFailure(errorMessage: String) {
                 Toast.makeText(this@ProductOfCategoryActivity, "Error.", Toast.LENGTH_SHORT).show()
             }
 

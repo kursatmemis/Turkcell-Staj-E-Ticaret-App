@@ -1,11 +1,13 @@
 package com.kursatmemis.e_ticaret_app.services
 
-import com.kursatmemis.e_ticaret_app.MainActivity
+import com.kursatmemis.e_ticaret_app.activities.MainActivity
 import com.kursatmemis.e_ticaret_app.models.AddedToBeCartResponse
 import com.kursatmemis.e_ticaret_app.models.CartOfUserResponse
 import com.kursatmemis.e_ticaret_app.models.CartToBeAdded
 import com.kursatmemis.e_ticaret_app.models.GetAllUserResponse
+import com.kursatmemis.e_ticaret_app.models.Product
 import com.kursatmemis.e_ticaret_app.models.ProductResponse
+import com.kursatmemis.e_ticaret_app.models.UpdatedUser
 import com.kursatmemis.e_ticaret_app.models.User
 import com.kursatmemis.e_ticaret_app.models.UserData
 import com.kursatmemis.e_ticaret_app.models.UserProfileData
@@ -49,6 +51,12 @@ interface DummyService {
 
     @GET("users")
     fun getAllUsers(): Call<GetAllUserResponse>
+
+    @PUT("users/{endpoint}")
+    fun updateUser(@Path("endpoint") userId: Long, @Body updatedUser: UpdatedUser): Call<UserAllData>
+
+    @GET("products/{endpoint}")
+    fun getSingleProduct(@Path("endpoint") productId: Long): Call<Product>
 
 }
 
