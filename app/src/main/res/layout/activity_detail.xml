@@ -7,23 +7,13 @@
     android:background="@color/backgroundColor"
     tools:context=".activities.DetailActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/Theme.ETicaretApp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        app:layout_constraintBottom_toTopOf="@+id/indicator"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        android:layout_height="250dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <me.relex.circleindicator.CircleIndicator
         android:id="@+id/indicator"
@@ -144,14 +134,19 @@
 
     <Button
         android:id="@+id/addToCartButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="10dp"
         android:backgroundTint="@color/colorPrimary"
         android:text="Add To Cart"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/commentsTextView"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:layout_editor_absoluteX="134dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <TextView
         android:id="@+id/priceTextView"
@@ -169,14 +164,13 @@
         android:id="@+id/commentsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Comments about the product"
-        android:textColor="@color/orange"
-        android:textStyle="bold"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:text="Show Reviews"
+        android:textColor="@color/buttonColorLogin"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addToCartButton" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

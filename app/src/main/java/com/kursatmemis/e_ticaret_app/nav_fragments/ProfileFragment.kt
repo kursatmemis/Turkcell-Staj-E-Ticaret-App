@@ -3,11 +3,12 @@ package com.kursatmemis.e_ticaret_app.nav_fragments
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -18,7 +19,9 @@ import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
 import com.kursatmemis.e_ticaret_app.databinding.FragmentProfileBinding
+import com.kursatmemis.e_ticaret_app.databinding.UpdateDialogBinding
 import com.kursatmemis.e_ticaret_app.models.Address
+import com.kursatmemis.e_ticaret_app.models.CallBack
 import com.kursatmemis.e_ticaret_app.models.ControlResult
 import com.kursatmemis.e_ticaret_app.models.Coordinates
 import com.kursatmemis.e_ticaret_app.models.Date
@@ -26,12 +29,8 @@ import com.kursatmemis.e_ticaret_app.models.UpdatedUser
 import com.kursatmemis.e_ticaret_app.models.UserAllData
 import com.kursatmemis.e_ticaret_app.models.UserProfileData
 import com.shashank.sony.fancytoastlib.FancyToast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
-
 
 class ProfileFragment : Fragment() {
 
@@ -47,28 +46,14 @@ class ProfileFragment : Fragment() {
         context = inflater.context
         binding = FragmentProfileBinding.inflate(inflater, container, false)
 
-        val scope = CoroutineScope(Dispatchers.Main)
-        scope.launch {
-            val message = "Failed to fetch data."
-            val type = FancyToast.ERROR
-            showProgressBar()
-            if (MainActivity.isServiceLogin) {
-                userAllData = getUserAllDataFromService()
-                if (userAllData == null) {
-                    showFancyToast(message, type)
-                } else {
-                    userProfileData = getUserProfileData(userAllData)
-                }
-            } else {
-                userProfileData = getUserProfileDataFromFirebase()
-            }
-            hideProgressBar()
-            if (userProfileData != null) {
-                showUserDataOnScreen(userProfileData)
-            } else {
-                showFancyToast(message, type)
-            }
+        showProgressBar()
+        if (MainActivity.isServiceLogin) {
+            getUserAllDataFromService()
+        } else {
+            getUserProfileDataFromFirebase()
         }
+
+
 
         binding?.birthDateEditText?.setOnClickListener {
             val parsedDate: Date
@@ -113,26 +98,48 @@ class ProfileFragment : Fragment() {
         return binding!!.root
     }
 
+    private fun togglePasswordVisibility(
+        showPasswordButton: ImageView,
+        passwordEditText: EditText
+    ) {
+        val isPasswordVisible =
+            passwordEditText.transformationMethod is PasswordTransformationMethod
+        if (isPasswordVisible) {
+            passwordEditText.transformationMethod = null // Şifreyi göster
+            showPasswordButton.setImageResource(R.drawable.hide_eye) // Göz kapatılmış simgesi
+        } else {
+            passwordEditText.transformationMethod = PasswordTransformationMethod() // Şifreyi gizle
+            showPasswordButton.setImageResource(R.drawable.ic_eye) // Göz açık simgesi
+        }
+        passwordEditText.setSelection(passwordEditText.text.length) // Metin seçimini güncelle
+    }
+
     private fun showAlertDialog() {
+        val binding = UpdateDialogBinding.inflate(layoutInflater)
         val builder = AlertDialog.Builder(context)
+        builder.setView(binding.root)
         builder.setTitle("Update")
-        val updateDialog = layoutInflater.inflate(R.layout.update_dialog, null)
-        val emailEditText = updateDialog.findViewById<EditText>(R.id.dialogUsernameET)
-        val passwordEditText = updateDialog.findViewById<EditText>(R.id.dialogPasswordET)
-        val updateButton = updateDialog.findViewById<Button>(R.id.dialogUpdateButton)
 
         if (MainActivity.isServiceLogin) {
-            emailEditText.setText(userAllData?.email)
-            passwordEditText.setText(userAllData?.password)
+            binding.dialogUsernameET.setText(userAllData?.email)
+            binding.dialogPasswordET.setText(userAllData?.password)
         } else {
-            emailEditText.setText(FirebaseManager.auth.currentUser!!.email)
+            binding.dialogUsernameET.setText(FirebaseManager.auth.currentUser!!.email)
         }
-        updateButton.setOnClickListener {
-            val newEmail = emailEditText.text.toString()
-            val newPassword = passwordEditText.text.toString()
-            if (MainActivity.isServiceLogin) {
+
+        binding.showPasswordImageButton.setOnClickListener {
+            togglePasswordVisibility(binding.showPasswordImageButton, binding.dialogPasswordET)
+        }
+
+        binding.dialogUpdateButton.setOnClickListener {
+            val newEmail = binding.dialogUsernameET.text.toString()
+            val newPassword = binding.dialogPasswordET.text.toString()
+
+            if (newEmail.isEmpty() || newPassword.isEmpty()) {
+                showFancyToast("Please fill in the fields.", FancyToast.WARNING)
+            } else if (MainActivity.isServiceLogin) {
                 val user = UpdatedUser(newEmail, newPassword)
-                RetrofitManager.updateUser(user, object : RetrofitManager.CallBack<UserAllData> {
+                RetrofitManager.updateUser(user, object : CallBack<UserAllData> {
                     override fun onSuccess(data: UserAllData) {
                         showFancyToast("Updated your information.", FancyToast.INFO)
                     }
@@ -144,7 +151,7 @@ class ProfileFragment : Fragment() {
                 })
             } else {
                 FirebaseManager.updateUser(newEmail, newPassword, object :
-                    FirebaseManager.CallBack<Any?> {
+                    CallBack<Any?> {
 
                     override fun onSuccess(data: Any?) {
                         showFancyToast("Updated your information.", FancyToast.INFO)
@@ -158,29 +165,64 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        builder.setView(updateDialog)
         builder.show()
-
     }
 
     private fun updateUserProfileAndShowResult(userProfileData: UserProfileData) {
-        val scope = CoroutineScope(Dispatchers.Main)
-        scope.launch {
-            val isUpdated = RetrofitManager.updateUserProfile(userProfileData)
-            val message = if (isUpdated) "Your profile is updated."
-            else "An error occurred while updating the profile. Please try again."
-            val fancyToastType = if (isUpdated) FancyToast.SUCCESS else FancyToast.WARNING
-            showFancyToast(message, fancyToastType)
-            hideProgressBar()
-        }
+        RetrofitManager.updateUserProfile(userProfileData, object : CallBack<Boolean> {
+            override fun onSuccess(data: Boolean) {
+                if (data) {
+                    showFancyToast("Your profile is updated.", FancyToast.SUCCESS)
+                } else {
+                    showFancyToast(
+                        "An error occurred while updating the profile. Please try again.",
+                        FancyToast.WARNING
+                    )
+                }
+                hideProgressBar()
+            }
+
+            override fun onFailure(errorMessage: String) {
+                showFancyToast(errorMessage, FancyToast.ERROR)
+            }
+        })
     }
 
-    private suspend fun getUserProfileDataFromFirebase(): UserProfileData? {
-        return FirebaseManager.getProfileData()
+    private fun getUserProfileDataFromFirebase() {
+        return FirebaseManager.getProfileData(object : CallBack<UserProfileData> {
+            override fun onSuccess(data: UserProfileData) {
+                showUserDataOnScreen(data)
+                hideProgressBar()
+            }
+
+            override fun onFailure(errorMessage: String) {
+                showFancyToast(errorMessage, FancyToast.ERROR)
+                hideProgressBar()
+            }
+
+        })
     }
 
-    private suspend fun getUserAllDataFromService(): UserAllData? {
-        return RetrofitManager.getUserAllData()
+    private fun getUserAllDataFromService() {
+        return RetrofitManager.getUserAllData(object : CallBack<UserAllData?> {
+            override fun onSuccess(data: UserAllData?) {
+                userAllData = data
+                if (userAllData == null) {
+                    showFancyToast("Failed to fetch data.", FancyToast.WARNING)
+                    hideProgressBar()
+                } else {
+                    userProfileData = getUserProfileData(userAllData)
+                    showUserDataOnScreen(userProfileData)
+                    hideProgressBar()
+                }
+            }
+
+            override fun onFailure(errorMessage: String) {
+                showFancyToast(errorMessage, FancyToast.ERROR)
+                hideProgressBar()
+            }
+
+        })
     }
 
     private fun saveToDatabaseAndShowResult(userProfileData: UserProfileData) {
@@ -205,10 +247,6 @@ class ProfileFragment : Fragment() {
 
         if (userProfileData.lastName?.isEmpty() == true) {
             return ControlResult("Please enter a valid surname.", false)
-        }
-
-        if (userProfileData.email?.isEmpty() == true || userProfileData.email?.contains("@") == false) {
-            return ControlResult("Please enter a valid email.", false)
         }
 
         if (userProfileData.phone?.isEmpty() == true) {
@@ -276,7 +314,6 @@ class ProfileFragment : Fragment() {
         }
         val name = binding?.nameEditText?.text.toString()
         val surname = binding?.surnameEditText?.text.toString()
-        val email = binding?.emailEditText?.text.toString()
         val phone = binding?.phoneEditText?.text.toString()
         val address = Address(
             binding?.addressEditText?.text.toString(),
@@ -294,23 +331,22 @@ class ProfileFragment : Fragment() {
         if (image == null) {
             image = ""
         }
-        return UserProfileData(image, name, surname, email, phone, address, birthDate, gender)
+        return UserProfileData(image, name, surname, phone, address, birthDate, gender)
     }
 
     private fun showUserDataOnScreen(userProfileData: UserProfileData?) {
-        if (userProfileData!!.image?.isNotEmpty() == true) {
+        if (userProfileData?.image?.isNotEmpty() == true) {
             Glide.with(context).load(userProfileData.image).into(binding?.imageImageView!!)
         } else {
             binding?.imageImageView?.setImageResource(R.drawable.ic_profile)
         }
-        binding?.nameEditText?.setText(userProfileData.firstName)
-        binding?.surnameEditText?.setText(userProfileData.lastName)
-        binding?.emailEditText?.setText(userProfileData.email)
-        binding?.phoneEditText?.setText(userProfileData.phone)
-        binding?.cityEditText?.setText(userProfileData.address?.city)
-        binding?.addressEditText?.setText(userProfileData.address?.address)
-        binding?.birthDateEditText?.setText(userProfileData.birthDate)
-        if (userProfileData.gender == "male") {
+        binding?.nameEditText?.setText(userProfileData?.firstName)
+        binding?.surnameEditText?.setText(userProfileData?.lastName)
+        binding?.phoneEditText?.setText(userProfileData?.phone)
+        binding?.cityEditText?.setText(userProfileData?.address?.city)
+        binding?.addressEditText?.setText(userProfileData?.address?.address)
+        binding?.birthDateEditText?.setText(userProfileData?.birthDate)
+        if (userProfileData?.gender == "male") {
             binding?.maleRadioButton?.isChecked = true
         } else {
             binding?.femaleRadioButton?.isChecked = true
@@ -321,7 +357,6 @@ class ProfileFragment : Fragment() {
         val image = userAllData!!.image
         val firstName = userAllData.firstName
         val lastName = userAllData.lastName
-        val email = userAllData.email
         val phone = userAllData.phone
         val address = Address(
             userAllData.address.address,
@@ -332,7 +367,7 @@ class ProfileFragment : Fragment() {
         )
         val birthDate = userAllData.birthDate
         val gender = userAllData.gender
-        return UserProfileData(image, firstName, lastName, email, phone, address, birthDate, gender)
+        return UserProfileData(image, firstName, lastName, phone, address, birthDate, gender)
     }
 
     private fun hideProgressBar() {

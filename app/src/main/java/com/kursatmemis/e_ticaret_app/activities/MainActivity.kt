@@ -19,13 +19,14 @@ import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.databinding.ActivityMainBinding
 import com.kursatmemis.e_ticaret_app.managers.SharedPrefManager
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navHostFragment: NavHostFragment
 
     companion object {
-        var userId: String? = null
+        var userId: String = ""
         var isServiceLogin: Boolean = false
     }
 
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("mKm - firebase", token)
         })
 
-        userId = intent.getStringExtra("userId")
+        userId = intent.getStringExtra("userId").toString()
         isServiceLogin = intent.getBooleanExtra("isService", false)
 
     }

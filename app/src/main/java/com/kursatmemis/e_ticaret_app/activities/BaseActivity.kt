@@ -10,6 +10,7 @@ import android.widget.ProgressBar
 import com.google.android.material.snackbar.Snackbar
 import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
+import com.kursatmemis.e_ticaret_app.models.CallBack
 import com.kursatmemis.e_ticaret_app.models.User
 import com.kursatmemis.e_ticaret_app.models.UserData
 import com.shashank.sony.fancytoastlib.FancyToast
@@ -49,13 +50,13 @@ open class BaseActivity : AppCompatActivity() {
     open fun loginWithFirebase(
         email: String,
         password: String,
-        callback: FirebaseManager.CallBack<Any?>,
+        callback: CallBack<Any?>,
         isToSendVerification: Boolean = false
     ) {
         FirebaseManager.login(email, password, callback, isToSendVerification)
     }
 
-    open fun loginWithService(user: User, callback: RetrofitManager.CallBack<UserData>) {
+    open fun loginWithService(user: User, callback: CallBack<UserData>) {
         RetrofitManager.login(user, callback)
     }
 

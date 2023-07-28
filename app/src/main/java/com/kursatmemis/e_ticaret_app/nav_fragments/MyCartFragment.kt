@@ -2,18 +2,21 @@ package com.kursatmemis.e_ticaret_app.nav_fragments
 
 import android.content.Intent
 import android.util.Log
+import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.ListView
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.kursatmemis.e_ticaret_app.activities.DetailActivity
 import com.kursatmemis.e_ticaret_app.activities.MainActivity
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.adapters.CartAdapter
 import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
+import com.kursatmemis.e_ticaret_app.models.CallBack
 import com.kursatmemis.e_ticaret_app.models.Product
 import com.kursatmemis.e_ticaret_app.models.ProductInCart
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.shashank.sony.fancytoastlib.FancyToast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,7 +25,8 @@ class MyCartFragment : BaseFragment() {
     override var dataSource: MutableList<Any> = mutableListOf()
 
     override fun setAdapter() {
-        adapter = CartAdapter(appContext, dataSource as MutableList<ProductInCart>) as ArrayAdapter<Any>
+        adapter =
+            CartAdapter(appContext, dataSource as MutableList<ProductInCart>) as ArrayAdapter<Any>
     }
 
     override fun getLayoutResource(): Int {
@@ -34,23 +38,52 @@ class MyCartFragment : BaseFragment() {
     }
 
     override fun getDataFromServiceOrFirebase() {
-        val scope = CoroutineScope(Dispatchers.Main)
-        scope.launch {
-            if (MainActivity.isServiceLogin) {
-                RetrofitManager.getProductsInCart(dataSource, adapter)
-                updateAdapter()
-                Log.w("mKm-service", dataSource.toString())
-            } else {
-                dataSource = FirebaseManager.getProductsInCart() as MutableList<Any>
-                updateAdapter()
-            }
+
+        if (MainActivity.isServiceLogin) {
+            RetrofitManager.getProductsInCart(object : CallBack<List<ProductInCart>>{
+                override fun onSuccess(data: List<ProductInCart>) {
+                    dataSource = data.toMutableList()
+                    if (dataSource.isEmpty()) {
+                        showAlertDialog()
+                    }
+                    updateAdapter()
+                }
+
+                override fun onFailure(errorMessage: String) {
+                    showFancyToast(errorMessage, FancyToast.ERROR)
+                }
+
+            })
+
+        } else {
+            FirebaseManager.getProductsInCart(object : CallBack<MutableList<ProductInCart>> {
+                override fun onSuccess(data: MutableList<ProductInCart>) {
+                    dataSource = data as MutableList<Any>
+                    if (dataSource.isEmpty()) {
+                        showAlertDialog()
+                    }
+                    updateAdapter()
+                }
+
+                override fun onFailure(errorMessage: String) {
+                    showFancyToast(errorMessage, FancyToast.ERROR)
+                }
+            })
         }
     }
+
+    private fun showAlertDialog() {
+        val builder = AlertDialog.Builder(appContext)
+        builder.setTitle("Empty Cart")
+        builder.setMessage("Your cart is empty. Let's add some products.")
+        builder.show()
+    }
+
 
     override fun onListItemClick(position: Int) {
 
         RetrofitManager.dummyService.getSingleProduct((dataSource[position] as ProductInCart).id!!)
-            .enqueue(object : Callback<Product>{
+            .enqueue(object : Callback<Product> {
                 override fun onResponse(call: Call<Product>, response: Response<Product>) {
                     val product = response.body()
                     val intent = Intent(appContext, DetailActivity::class.java)
@@ -59,7 +92,7 @@ class MyCartFragment : BaseFragment() {
                 }
 
                 override fun onFailure(call: Call<Product>, t: Throwable) {
-
+                    showFancyToast(t.message.toString(), FancyToast.ERROR)
                 }
 
             })

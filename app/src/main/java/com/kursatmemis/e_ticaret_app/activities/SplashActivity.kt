@@ -6,6 +6,7 @@ import com.kursatmemis.e_ticaret_app.databinding.ActivitySplashBinding
 import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
 import com.kursatmemis.e_ticaret_app.managers.SharedPrefManager
+import com.kursatmemis.e_ticaret_app.models.CallBack
 import com.kursatmemis.e_ticaret_app.models.User
 import com.kursatmemis.e_ticaret_app.models.UserData
 import com.shashank.sony.fancytoastlib.FancyToast
@@ -42,7 +43,7 @@ class SplashActivity : BaseActivity() {
         val user = User(username!!, password!!)
 
         if (isServiceLogin(username)) {
-            loginWithService(user, object : RetrofitManager.CallBack<UserData> {
+            loginWithService(user, object : CallBack<UserData> {
                 override fun onSuccess(data: UserData) {
                     goToMainActivity(data.id.toString(), true)
                 }
@@ -55,7 +56,7 @@ class SplashActivity : BaseActivity() {
 
             })
         } else {
-            loginWithFirebase(username, password, object : FirebaseManager.CallBack<Any?> {
+            loginWithFirebase(username, password, object : CallBack<Any?> {
 
                 override fun onSuccess(data: Any?) {
                     goToMainActivity(FirebaseManager.auth.currentUser!!.uid, false)

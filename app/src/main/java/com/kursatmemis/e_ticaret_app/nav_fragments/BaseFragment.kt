@@ -8,16 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import com.kursatmemis.e_ticaret_app.activities.DetailActivity
 import com.kursatmemis.e_ticaret_app.models.Product
+import com.shashank.sony.fancytoastlib.FancyToast
 
 abstract class BaseFragment : Fragment() {
     lateinit var listView: ListView
     lateinit var adapter: ArrayAdapter<Any>
     abstract var dataSource: MutableList<Any>
-
     lateinit var appContext: Context
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,6 +27,7 @@ abstract class BaseFragment : Fragment() {
     ): View? {
         appContext = inflater.context
         val fragmentLayout = inflater.inflate(getLayoutResource(), container, false)
+
         setAdapter()
         listView = fragmentLayout.findViewById(getListViewResource())
         listView.adapter = adapter
@@ -37,16 +40,28 @@ abstract class BaseFragment : Fragment() {
         return fragmentLayout
     }
 
+
+
     open fun onListItemClick(position: Int) {
         val intent = Intent(requireContext(), DetailActivity::class.java)
         intent.putExtra("product", dataSource[position] as Product)
         startActivity(intent)
     }
 
-    fun updateAdapter() {
+    open fun updateAdapter() {
         adapter.clear()
         adapter.addAll(dataSource)
         adapter.notifyDataSetChanged()
+    }
+
+    open fun showFancyToast(message: String, fancyToastType: Int) {
+        FancyToast.makeText(
+            appContext,
+            message,
+            FancyToast.LENGTH_LONG,
+            fancyToastType,
+            false
+        ).show()
     }
 
     abstract fun setAdapter()

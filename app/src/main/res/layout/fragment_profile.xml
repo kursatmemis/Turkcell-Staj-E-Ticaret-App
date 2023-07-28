@@ -81,36 +81,15 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/filledTextFieldEmail"
-                    style="@style/TextInputLayoutStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="64dp"
-                    android:layout_marginTop="10dp"
-                    android:hint="Email"
-                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldSurname"
-                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldName"
-                    app:layout_constraintTop_toBottomOf="@id/filledTextFieldName">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/emailEditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:maxLines="1" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/filledTextFieldPhone"
                     style="@style/TextInputLayoutStyle"
                     android:layout_width="0dp"
                     android:layout_height="64dp"
                     android:layout_marginTop="10dp"
                     android:hint="Phone"
-                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
-                    app:layout_constraintHorizontal_bias="0.416"
-                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
-                    app:layout_constraintTop_toBottomOf="@+id/filledTextFieldEmail">
+                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldSurname"
+                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldName"
+                    app:layout_constraintTop_toBottomOf="@id/filledTextFieldName">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/phoneEditText"
@@ -128,9 +107,9 @@
                     android:layout_height="64dp"
                     android:layout_marginTop="10dp"
                     android:hint="City"
-                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldPhone"
                     app:layout_constraintHorizontal_bias="0.416"
-                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldPhone"
                     app:layout_constraintTop_toBottomOf="@+id/filledTextFieldPhone">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -149,9 +128,9 @@
                     android:layout_height="64dp"
                     android:layout_marginTop="10dp"
                     android:hint="Address"
-                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldPhone"
                     app:layout_constraintHorizontal_bias="0.416"
-                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldPhone"
                     app:layout_constraintTop_toBottomOf="@+id/filledTextFieldCity">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -170,9 +149,9 @@
                     android:layout_height="64dp"
                     android:layout_marginTop="10dp"
                     android:hint="Birth Date"
-                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldPhone"
                     app:layout_constraintHorizontal_bias="0.416"
-                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldPhone"
                     app:layout_constraintTop_toBottomOf="@+id/filledTextFieldAddress">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -220,9 +199,9 @@
                     android:backgroundTint="@color/colorPrimary"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toTopOf="@+id/changeEmailAndPasswordTextView"
-                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintEnd_toEndOf="@+id/filledTextFieldPhone"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldEmail"
+                    app:layout_constraintStart_toStartOf="@+id/filledTextFieldPhone"
                     app:layout_constraintTop_toBottomOf="@+id/genderRadioGroup" />
 
                 <ProgressBar

@@ -2,6 +2,7 @@ package com.kursatmemis.e_ticaret_app.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -12,6 +13,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.kursatmemis.e_ticaret_app.databinding.ActivityDetailBinding
 import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
+import com.kursatmemis.e_ticaret_app.models.CallBack
 import com.kursatmemis.e_ticaret_app.models.ProductToBeAdded
 import com.kursatmemis.e_ticaret_app.models.CartToBeAdded
 import com.kursatmemis.e_ticaret_app.models.Product
@@ -36,10 +38,7 @@ class DetailActivity : BaseActivity() {
 
         binding.addToCartButton.setOnClickListener {
             if (MainActivity.isServiceLogin) {
-                val scope = CoroutineScope(Dispatchers.Main)
-                scope.launch {
-                    addProductToCartWithService(product.id)
-                }
+                addProductToCartWithService(product.id)
             } else {
                 addProductToCartWithFirebase(product)
             }
@@ -53,6 +52,7 @@ class DetailActivity : BaseActivity() {
 
     private fun goToCommentActivity(productId: Long) {
         val intent = Intent(this@DetailActivity, CommentActivity::class.java)
+        Log.w("aaa", productId.toString())
         intent.putExtra("productId", productId)
         startActivity(intent)
     }
@@ -90,7 +90,16 @@ class DetailActivity : BaseActivity() {
             product.discountPercentage,
             calculateDiscountedPrice(product.price, product.discountPercentage).toLong()
         )
-        FirebaseManager.addProductToCart(productInCart)
+        FirebaseManager.addProductToCart(productInCart, object : CallBack<Any> {
+            override fun onSuccess(data: Any) {
+                // Bir şey yapma.
+            }
+
+            override fun onFailure(errorMessage: String) {
+                showFancyToast(errorMessage, FancyToast.ERROR)
+            }
+
+        })
     }
 
     private fun calculateDiscountedPrice(price: Long, discountPercentage: Double): Double {
@@ -104,7 +113,7 @@ class DetailActivity : BaseActivity() {
         val cartToBeAdded = CartToBeAdded(MainActivity.userId!!.toLong(), products)
         return RetrofitManager.addProductToCart(
             cartToBeAdded,
-            object : RetrofitManager.CallBack<Boolean> {
+            object : CallBack<Boolean> {
                 override fun onSuccess(data: Boolean) {
                     val message = "The product added to the cart successfully!"
                     val type = FancyToast.INFO

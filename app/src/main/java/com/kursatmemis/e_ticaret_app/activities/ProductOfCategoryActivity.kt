@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.kursatmemis.e_ticaret_app.adapters.ProductAdapter
 import com.kursatmemis.e_ticaret_app.databinding.ActivityProductOfCategoryBinding
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
+import com.kursatmemis.e_ticaret_app.models.CallBack
 import com.kursatmemis.e_ticaret_app.models.Product
 
 class ProductOfCategoryActivity : AppCompatActivity() {
@@ -26,7 +27,8 @@ class ProductOfCategoryActivity : AppCompatActivity() {
 
         val categoryName = intent.getStringExtra("categoryName")
 
-        RetrofitManager.getProductsOfCategory(categoryName, object : RetrofitManager.CallBack<MutableList<Product>> {
+        RetrofitManager.getProductsOfCategory(categoryName, object :
+            CallBack<MutableList<Product>> {
             override fun onSuccess(data: MutableList<Product>) {
                 productsOfCategoryList = data
                 updateAdapter()

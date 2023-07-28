@@ -1,51 +1,49 @@
 package com.kursatmemis.e_ticaret_app.activities
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.ArrayAdapter
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.github.javafaker.Faker
 import com.kursatmemis.e_ticaret_app.adapters.CommentAdapter
 import com.kursatmemis.e_ticaret_app.databinding.ActivityCommentBinding
 import com.kursatmemis.e_ticaret_app.databinding.AddCommentDialogBinding
 import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
+import com.kursatmemis.e_ticaret_app.models.CallBack
+import com.kursatmemis.e_ticaret_app.models.UserAllData
 import com.shashank.sony.fancytoastlib.FancyToast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class CommentActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCommentBinding
     private lateinit var adapter: CommentAdapter
-    private var userComments = mutableListOf<UserComment>()
-    private var productId: Long = -1
+    private var dataSource = mutableListOf<CommentInfo>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCommentBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setAdapter()
 
-        productId = intent.getLongExtra("productId", -1)
-        generateRandomComments(10, productId)
+        val productId = intent.getLongExtra("productId", -1)
+        setAdapter(productId)
+
         getCommentsFromFirebase(productId)
 
         binding.addCommentButton.setOnClickListener {
-            showAlertDialog()
+            showAlertDialog(productId)
         }
     }
 
-    private fun showAlertDialog() {
+    private fun showAlertDialog(productId: Long) {
         val bindingDialog = AddCommentDialogBinding.inflate(layoutInflater)
         val builder = AlertDialog.Builder(this@CommentActivity)
         builder.setView(bindingDialog.root)
         builder.setTitle("Submit Comment/Review")
+
+        val alertDialog = builder.create() // AlertDialog'u bir değişkende saklayın.
+
         bindingDialog.btnSubmit.setOnClickListener {
-            showProgressBar(bindingDialog.progressBar)
             val comment = bindingDialog.editTextReview.text.toString()
             if (comment.trim().isEmpty()) {
                 Toast.makeText(
@@ -53,30 +51,57 @@ class CommentActivity : BaseActivity() {
                     "Please fill in the field.",
                     Toast.LENGTH_SHORT
                 ).show()
-                hideProgressBar(bindingDialog.progressBar)
             } else {
-                saveReviewToFirebase(comment)
-                hideProgressBar(bindingDialog.progressBar)
+                saveReviewToFirebase(comment, productId)
+                alertDialog.dismiss() // AlertDialog'u kapatın.
             }
+
+            val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(
+                bindingDialog.root.windowToken,
+                0
+            ) // Klavyeyi gizleyin.
         }
-        builder.show()
+
+        alertDialog.show()
     }
 
-    private fun saveReviewToFirebase(comment: String) {
+    private fun saveReviewToFirebase(comment: String, productId: Long) {
         if (MainActivity.isServiceLogin) {
-            val scope = CoroutineScope(Dispatchers.Main)
-            scope.launch {
-                val userAllData = RetrofitManager.getUserAllData()
-                val userId = userAllData?.id
-                val name = userAllData?.firstName
-                val userComment = UserComment(userId.toString(), name, comment)
-                val ref =
-                    FirebaseManager.database.child("comment").child("productId").child(productId.toString())
-                        .child("userId").child(userId.toString())
+            RetrofitManager.getUserAllData(object : CallBack<UserAllData?> {
+                override fun onSuccess(data: UserAllData?) {
+                    val userAllData = data
+                    val userId = userAllData?.id
+                    val name = userAllData?.firstName
 
-                FirebaseManager.saveData(ref, userComment)
-                getCommentsFromFirebase(productId)
-            }
+                    FirebaseManager.getUserComments(
+                        productId,
+                        userId.toString(),
+                        object : CallBack<MutableList<String>> {
+                            override fun onSuccess(data: MutableList<String>) {
+                                data.add(comment)
+                                val userComment = UserComment(userId.toString(), name, data)
+                                FirebaseManager.addComment(
+                                    productId.toString(),
+                                    userId!!.toString(), userComment
+                                )
+                                getCommentsFromFirebase(productId)
+                            }
+
+                            override fun onFailure(errorMessage: String) {
+                                showFancyToast(errorMessage, FancyToast.ERROR)
+                            }
+
+                        })
+
+                }
+
+                override fun onFailure(errorMessage: String) {
+                    showFancyToast(errorMessage, FancyToast.ERROR)
+                }
+
+            })
+
         } else {
             val currentUser = FirebaseManager.auth.currentUser!!
             val userId = currentUser.uid
@@ -84,31 +109,48 @@ class CommentActivity : BaseActivity() {
             if (name?.isEmpty() == true || name == null) {
                 name = currentUser.email?.substring(0, currentUser.email?.indexOf("@")!!)
             }
-            val userComment = UserComment(userId, name, comment)
-            val ref =
-                FirebaseManager.database.child("comment").child("productId").child(productId.toString())
-                    .child("userId").child(userId)
 
-            FirebaseManager.saveData(ref, userComment)
-            getCommentsFromFirebase(productId)
+            FirebaseManager.getUserComments(
+                productId,
+                userId,
+                object : CallBack<MutableList<String>> {
+                    override fun onSuccess(data: MutableList<String>) {
+                        data.add(comment)
+                        val userComment = UserComment(userId, name, data)
+                        FirebaseManager.addComment(
+                            productId.toString(),
+                            userId, userComment
+                        )
+                        getCommentsFromFirebase(productId)
+                    }
+
+                    override fun onFailure(errorMessage: String) {
+                        showFancyToast(errorMessage, FancyToast.ERROR)
+                    }
+
+                })
         }
 
     }
 
-    private fun setAdapter() {
-        adapter = CommentAdapter(this@CommentActivity, userComments)
-        binding.commentListView.adapter = adapter
-    }
-
-    private fun getCommentsFromFirebase(productId: Long): Any {
-        return FirebaseManager.getComments(
+    private fun getCommentsFromFirebase(productId: Long) {
+        FirebaseManager.getComments(
             productId,
-            object : FirebaseManager.CallBack<MutableList<UserComment>> {
-
+            object : CallBack<MutableList<UserComment>> {
                 override fun onSuccess(data: MutableList<UserComment>) {
-                    updateAdapter(data as MutableList<Any>, adapter as ArrayAdapter<Any>)
-                }
+                    val comments = mutableListOf<CommentInfo>()
+                    for (item in data) {
+                        val name = item.name
 
+                        for (comment in item.comments!!) {
+                            val commentInfo = CommentInfo(item.id!!, name!!, comment)
+                            comments.add(commentInfo)
+
+                        }
+                    }
+                    dataSource = comments
+                    updateAdapter(dataSource, adapter)
+                }
 
                 override fun onFailure(errorMessage: String) {
                     showFancyToast(errorMessage, FancyToast.WARNING)
@@ -116,47 +158,24 @@ class CommentActivity : BaseActivity() {
             })
     }
 
-    private fun generateRandomComments(count: Int, productId: Long) {
-        val randomUsers = generateRandomUser(count)
-        Log.w("mKm-comment", randomUsers.toString())
-
-        for (item in randomUsers) {
-            val ref = FirebaseManager.database.child("comment").child("productId").child(productId.toString())
-                .child("userId")
-                .child(item.id.toString())
-
-            FirebaseManager.saveData(ref, item)
-        }
-    }
-
-    private fun generateRandomUser(count: Int): MutableList<UserComment> {
-        val faker = Faker()
-        val userComments = mutableListOf<UserComment>()
-
-        for (i in 1..count) {
-            val id = i.toLong() * -1
-            val name = faker.name().firstName()
-            val comment = faker.lorem().sentence()
-            val userComment = UserComment(id.toString(), name, comment)
-            userComments.add(userComment)
-        }
-
-        return userComments
-    }
-
-    open fun updateAdapter(dataSource: MutableList<Any>, adapter: ArrayAdapter<Any>) {
-        Log.w("mKm - update", dataSource.toString())
+    fun updateAdapter(dataSource: MutableList<CommentInfo>, adapter: CommentAdapter) {
         adapter.clear()
-        Log.w("mKm - update", dataSource.toString())
         dataSource.reverse()
         adapter.addAll(dataSource)
         adapter.notifyDataSetChanged()
     }
+
+    private fun setAdapter(productId: Long) {
+        adapter = CommentAdapter(this@CommentActivity, dataSource, productId.toString())
+        binding.commentListView.adapter = adapter
+    }
 }
 
 data class UserComment(
-    val id: String? = "",
+    var id: String? = "",
     val name: String? = "",
-    val comment: String? = "",
+    val comments: MutableList<String>? = emptyList<String>().toMutableList(),
     val time: String? = Calendar.getInstance().timeInMillis.toString()
 )
+
+data class CommentInfo(val uid: String, val name: String, val comment: String?)

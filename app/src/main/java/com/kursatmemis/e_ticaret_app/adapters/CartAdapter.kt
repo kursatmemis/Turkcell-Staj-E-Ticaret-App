@@ -19,57 +19,86 @@ class CartAdapter(context: Context, private val productsInCart: MutableList<Prod
     ArrayAdapter<ProductInCart>(context, R.layout.cart_item, productsInCart) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val layoutInflater = LayoutInflater.from(context)
-        val cartItem = layoutInflater.inflate(R.layout.cart_item, parent, false)
-        val productImageImageView = cartItem.findViewById<ImageView>(R.id.productImageImageView)
-        val productTitleTextView = cartItem.findViewById<TextView>(R.id.productTitleTextView)
-        val productDescriptionTextView = cartItem.findViewById<TextView>(R.id.productDescriptionTextView)
-        val removeProductFromCartImageView = cartItem.findViewById<ImageView>(R.id.removeProductFromCartImageView)
-        val incrementButton = cartItem.findViewById<Button>(R.id.incrementButton)
-        val countTextView = cartItem.findViewById<TextView>(R.id.countTextView)
-        val decrementButton = cartItem.findViewById<Button>(R.id.decrementButton)
-        val priceTextView = cartItem.findViewById<TextView>(R.id.priceTextView)
+        var cartItem = convertView
+        val viewHolder: ViewHolder
+
+        if (cartItem == null) {
+            val layoutInflater = LayoutInflater.from(context)
+            cartItem = layoutInflater.inflate(R.layout.cart_item, parent, false)
+            viewHolder = ViewHolder()
+            viewHolder.productImageImageView = cartItem.findViewById(R.id.productImageImageView)
+            viewHolder.productTitleTextView = cartItem.findViewById(R.id.productTitleTextView)
+            viewHolder.productDescriptionTextView = cartItem.findViewById(R.id.productDescriptionTextView)
+            viewHolder.removeProductFromCartImageView = cartItem.findViewById(R.id.removeProductFromCartImageView)
+            viewHolder.incrementButton = cartItem.findViewById(R.id.incrementButton)
+            viewHolder.countTextView = cartItem.findViewById(R.id.countTextView)
+            viewHolder.decrementButton = cartItem.findViewById(R.id.decrementButton)
+            viewHolder.priceTextView = cartItem.findViewById(R.id.priceTextView)
+            cartItem.tag = viewHolder
+        } else {
+            viewHolder = cartItem.tag as ViewHolder
+        }
+
         val product = productsInCart[position]
 
-        priceTextView.text = "${product.price}$"
+        viewHolder.countTextView.text = product.quantity.toString()
+        viewHolder.priceTextView.text = "${product.price?.times(product.quantity!!)}$"
 
-        incrementButton.setOnClickListener {
-            val count = countTextView.text.toString().toLong() + 1
-            countTextView.text = count.toString()
-            priceTextView.text = "${(product.price?.times(count))}$"
+        viewHolder.decrementButton.isEnabled = product.quantity!! > 1
+        viewHolder.decrementButton.setBackgroundColor(
+            context.resources.getColor(
+                if (product.quantity!! > 1) R.color.colorPrimary else R.color.gray
+            )
+        )
 
-            decrementButton.isEnabled = count > 1
-            if (!decrementButton.isEnabled) {
-                decrementButton.setBackgroundColor(context.resources.getColor(R.color.gray))
-            } else {
-                decrementButton.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
-            }
+        viewHolder.incrementButton.setOnClickListener {
+            product.quantity = product.quantity!! + 1
+            viewHolder.countTextView.text = product.quantity.toString()
+            viewHolder.priceTextView.text = "${product.price?.times(product.quantity!!)}$"
+
+            viewHolder.decrementButton.isEnabled = product.quantity!! > 1
+            viewHolder.decrementButton.setBackgroundColor(
+                context.resources.getColor(
+                    if (product.quantity!! > 1) R.color.colorPrimary else R.color.gray
+                )
+            )
         }
 
-        decrementButton.setOnClickListener {
-            val count = countTextView.text.toString().toLong() - 1
-            countTextView.text = count.toString()
-            priceTextView.text = "${(product.price?.times(count))}$"
+        viewHolder.decrementButton.setOnClickListener {
+            product.quantity = product.quantity!! - 1
+            viewHolder.countTextView.text = product.quantity.toString()
+            viewHolder.priceTextView.text = "${product.price?.times(product.quantity!!)}$"
 
-            decrementButton.isEnabled = count > 1
-            if (!decrementButton.isEnabled) {
-                decrementButton.setBackgroundColor(context.resources.getColor(R.color.gray))
-            } else {
-                decrementButton.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
-            }
+            viewHolder.decrementButton.isEnabled = product.quantity!! > 1
+            viewHolder.decrementButton.setBackgroundColor(
+                context.resources.getColor(
+                    if (product.quantity!! > 1) R.color.colorPrimary else R.color.gray
+                )
+            )
         }
 
-
-        removeProductFromCartImageView.setOnClickListener{
+        viewHolder.removeProductFromCartImageView.setOnClickListener {
             showAlertDialog(product)
         }
 
-        Glide.with(context).load(product.img).fitCenter().into(productImageImageView)
-        productTitleTextView.text = product.title
-        productDescriptionTextView.text = product.desc
+        Glide.with(context).load(product.img).fitCenter().into(viewHolder.productImageImageView)
+        viewHolder.productTitleTextView.text = product.title
+        viewHolder.productDescriptionTextView.text = product.desc
 
-        return cartItem
+        return cartItem!!
     }
+
+    private class ViewHolder {
+        lateinit var productImageImageView: ImageView
+        lateinit var productTitleTextView: TextView
+        lateinit var productDescriptionTextView: TextView
+        lateinit var removeProductFromCartImageView: ImageView
+        lateinit var incrementButton: Button
+        lateinit var countTextView: TextView
+        lateinit var decrementButton: Button
+        lateinit var priceTextView: TextView
+    }
+
 
     private fun showAlertDialog(product: ProductInCart) {
 

@@ -16,7 +16,7 @@
     <string name="logo">Logo</string>
     <string name="enter_a_keyword">Enter a keyword</string>
     <string name="child_item">Child Item</string>
-    <string name="click_on_item_to_show_the_details">Click on item to show the details...\nLong press to remove the element from the cart.</string>
+    <string name="click_on_item_to_show_the_details">Click on item to show the details...</string>
     <string name="enter_your_email">Enter your email</string>
     <string name="register">Register</string>
     <string name="sign_in">Sign-In</string>

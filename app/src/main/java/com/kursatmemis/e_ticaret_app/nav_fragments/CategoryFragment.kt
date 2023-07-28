@@ -5,9 +5,9 @@ import android.widget.ArrayAdapter
 import com.kursatmemis.e_ticaret_app.activities.ProductOfCategoryActivity
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.kursatmemis.e_ticaret_app.models.CallBack
+import com.shashank.sony.fancytoastlib.FancyToast
+
 class CategoryFragment : BaseFragment() {
     override var dataSource: MutableList<Any> = mutableListOf()
 
@@ -30,15 +30,19 @@ class CategoryFragment : BaseFragment() {
     }
 
     override fun getDataFromServiceOrFirebase() {
-        val scope = CoroutineScope(Dispatchers.Main)
-        scope.launch {
-            val categoryNames = RetrofitManager.getCategoryNames().toMutableList()
-            for (name in categoryNames) {
-                val result = makeFirstCharUpperCase(name)
-                dataSource.add(result)
+        RetrofitManager.getCategoryNames(object : CallBack<List<String>> {
+            override fun onSuccess(data: List<String>) {
+                for (categoryName in data) {
+                    val result = makeFirstCharUpperCase(categoryName)
+                    dataSource.add(result)
+                    adapter.notifyDataSetChanged()
+                }
             }
-            adapter.notifyDataSetChanged()
-        }
+
+            override fun onFailure(errorMessage: String) {
+                showFancyToast(errorMessage, FancyToast.ERROR)
+            }
+        })
     }
 
     private fun makeFirstCharUpperCase(input: String): String {

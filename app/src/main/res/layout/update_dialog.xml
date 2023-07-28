@@ -5,40 +5,63 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/dialogUsernameET"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dialogUsernameTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="20dp"
-        android:text="@string/_username"
-        android:textColor="@color/textColor"
-        android:ems="10"
-        android:inputType="text"
+        android:hint="Username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/dialogPasswordET"
+        <EditText
+            android:id="@+id/dialogUsernameET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:textColor="@color/textColor" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dialogPasswordTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="15dp"
-        android:ems="10"
-        android:inputType="text"
-        android:hint="@string/password"
-        android:textColor="@color/textColor"
         app:layout_constraintBottom_toTopOf="@+id/dialogUpdateButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialogUsernameET"
+        app:layout_constraintTop_toBottomOf="@+id/dialogUsernameTextInputLayout">
+
+        <EditText
+            android:id="@+id/dialogPasswordET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            android:textColor="@color/textColor"
+            android:inputType="textPassword"
         tools:ignore="TextFields" />
+
+
+        <ImageButton
+            android:id="@+id/showPasswordImageButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:backgroundTint="@color/backgroundColor"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="10dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_eye" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/dialogUpdateButton"
@@ -46,12 +69,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="30dp"
-        android:text="@string/update"
         android:backgroundTint="@color/buttonColorLogin"
+        android:text="@string/update"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialogPasswordET" />
+        app:layout_constraintTop_toBottomOf="@+id/dialogPasswordTextInputLayout" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

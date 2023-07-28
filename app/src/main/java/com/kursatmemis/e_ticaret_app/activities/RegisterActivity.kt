@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.databinding.ActivityRegisterBinding
 import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
+import com.kursatmemis.e_ticaret_app.models.CallBack
 import com.shashank.sony.fancytoastlib.FancyToast
 
 class RegisterActivity : BaseActivity() {
@@ -57,7 +58,7 @@ class RegisterActivity : BaseActivity() {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                loginWithFirebase(email, password, object : FirebaseManager.CallBack<Any?>{
+                loginWithFirebase(email, password, object : CallBack<Any?> {
 
                     override fun onSuccess(data: Any?) {
                         message = "We sent you a new mail for verification."
@@ -85,7 +86,7 @@ class RegisterActivity : BaseActivity() {
     }
 
     private fun register(email: String, password: String) {
-        FirebaseManager.createUser(email, password, object : FirebaseManager.CallBack<Any?> {
+        FirebaseManager.createUser(email, password, object : CallBack<Any?> {
             override fun onSuccess(data: Any?) {
                 val message = "Registraction is successful. Please verify your email and login on login page."
                 saveEmailToDatabase(email)

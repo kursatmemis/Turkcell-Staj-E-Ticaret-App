@@ -1,14 +1,12 @@
 package com.kursatmemis.e_ticaret_app.nav_fragments
 
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AppCompatActivity
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.adapters.ProductAdapter
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
+import com.kursatmemis.e_ticaret_app.models.CallBack
 import com.kursatmemis.e_ticaret_app.models.Product
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.shashank.sony.fancytoastlib.FancyToast
 
 class HomeFragment : BaseFragment() {
 
@@ -27,11 +25,16 @@ class HomeFragment : BaseFragment() {
     }
 
     override fun getDataFromServiceOrFirebase() {
-        val scope = CoroutineScope(Dispatchers.Main)
-        scope.launch {
-            dataSource = RetrofitManager.getAllProducts().toMutableList()
-            updateAdapter()
-        }
+        RetrofitManager.getAllProducts(object : CallBack<List<Product>> {
+            override fun onSuccess(data: List<Product>) {
+                dataSource = data.toMutableList()
+                updateAdapter()
+            }
+
+            override fun onFailure(errorMessage: String) {
+                showFancyToast(errorMessage, FancyToast.ERROR)
+            }
+        })
     }
 
 }

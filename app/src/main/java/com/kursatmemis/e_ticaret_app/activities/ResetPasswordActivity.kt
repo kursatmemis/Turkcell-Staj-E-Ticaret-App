@@ -3,6 +3,7 @@ package com.kursatmemis.e_ticaret_app.activities
 import android.os.Bundle
 import com.kursatmemis.e_ticaret_app.databinding.ActivityResetPasswordBinding
 import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
+import com.kursatmemis.e_ticaret_app.models.CallBack
 
 class ResetPasswordActivity : BaseActivity() {
 
@@ -30,7 +31,7 @@ class ResetPasswordActivity : BaseActivity() {
     }
 
     private fun resetPasswordWithFirebase(email: String) {
-        FirebaseManager.resetPassword(email, object : FirebaseManager.CallBack<Any?> {
+        FirebaseManager.resetPassword(email, object : CallBack<Any?> {
 
             override fun onSuccess(data: Any?) {
                 val message = "We sent your email address a password reset link."

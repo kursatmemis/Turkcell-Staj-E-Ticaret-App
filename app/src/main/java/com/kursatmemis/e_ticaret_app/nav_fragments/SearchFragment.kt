@@ -1,7 +1,6 @@
 package com.kursatmemis.e_ticaret_app.nav_fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +9,9 @@ import android.widget.SearchView
 import com.kursatmemis.e_ticaret_app.R
 import com.kursatmemis.e_ticaret_app.adapters.ProductAdapter
 import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
+import com.kursatmemis.e_ticaret_app.models.CallBack
 import com.kursatmemis.e_ticaret_app.models.Product
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.shashank.sony.fancytoastlib.FancyToast
 
 
 class SearchFragment : BaseFragment() {
@@ -45,8 +43,6 @@ class SearchFragment : BaseFragment() {
 
         })
 
-
-
         return fragmentLayout
     }
 
@@ -63,12 +59,19 @@ class SearchFragment : BaseFragment() {
     }
 
     override fun getDataFromServiceOrFirebase() {
-        Log.w("mKm-ssd", text)
         if (text.trim().isNotEmpty()) {
-            GlobalScope.launch(Dispatchers.Main) {
-                dataSource = RetrofitManager.searchProduct(text).toMutableList()
-                updateAdapter()
-            }
+
+            RetrofitManager.searchProduct(text, object : CallBack<List<Product>> {
+                override fun onSuccess(data: List<Product>) {
+                    dataSource = data.toMutableList()
+                    updateAdapter()
+                }
+
+                override fun onFailure(errorMessage: String) {
+                    showFancyToast(errorMessage, FancyToast.ERROR)
+                }
+
+            })
         } else {
             adapter.clear()
             adapter.notifyDataSetChanged()

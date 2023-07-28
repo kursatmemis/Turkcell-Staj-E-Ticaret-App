@@ -6,6 +6,7 @@ import com.kursatmemis.e_ticaret_app.managers.RetrofitManager
 import com.kursatmemis.e_ticaret_app.databinding.ActivityLoginBinding
 import com.kursatmemis.e_ticaret_app.managers.FirebaseManager
 import com.kursatmemis.e_ticaret_app.managers.SharedPrefManager
+import com.kursatmemis.e_ticaret_app.models.CallBack
 import com.kursatmemis.e_ticaret_app.models.GetAllUserResponse
 import com.kursatmemis.e_ticaret_app.models.User
 import com.kursatmemis.e_ticaret_app.models.UserData
@@ -31,7 +32,7 @@ class LoginActivity : BaseActivity() {
                 showProgressBar(binding.progressBar)
                 if (isServiceLogin(username)) {
                     val user = User(username, password)
-                    loginWithService(user, object : RetrofitManager.CallBack<UserData> {
+                    loginWithService(user, object : CallBack<UserData> {
                         override fun onSuccess(data: UserData) {
                             saveLastLoginTime(user.username, user.password)
                             goToMainActivity(data.id.toString(), true)
@@ -45,7 +46,7 @@ class LoginActivity : BaseActivity() {
 
                     })
                 } else {
-                    loginWithFirebase(username, password, object : FirebaseManager.CallBack<Any?> {
+                    loginWithFirebase(username, password, object : CallBack<Any?> {
 
                         override fun onSuccess(data: Any?) {
                             saveLastLoginTime(username, password)
@@ -119,14 +120,14 @@ class LoginActivity : BaseActivity() {
 
     private fun loginRandomUser() {
         showProgressBar(binding.progressBar)
-        RetrofitManager.getAllUser(object : RetrofitManager.CallBack<GetAllUserResponse> {
+        RetrofitManager.getAllUser(object : CallBack<GetAllUserResponse> {
             override fun onSuccess(data: GetAllUserResponse) {
                 if (data.users.isNotEmpty()) {
                     val randomNumber = generateRandomNumber(data.users.size)
                     val username = data.users[randomNumber].username
                     val password = data.users[randomNumber].password
                     val user = User(username, password)
-                    loginWithService(user, object : RetrofitManager.CallBack<UserData> {
+                    loginWithService(user, object : CallBack<UserData> {
                         override fun onSuccess(data: UserData) {
                             saveLastLoginTime(user.username, user.password)
                             goToMainActivity(data.id.toString(), true)

@@ -39,6 +39,23 @@
             android:textColor="@color/textColor"
             android:textSize="16sp" />
 
+        <ImageView
+            android:id="@+id/removeComment"
+            android:layout_width="24sp"
+            android:layout_height="24sp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/ic_remove_product"
+            android:text="@string/remove_product_from_the_cart"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/priceTextView"
+            app:layout_constraintStart_toStartOf="@+id/priceTextView"
+            app:layout_constraintTop_toBottomOf="@+id/priceTextView" />
+
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
