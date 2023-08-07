@@ -68,6 +68,7 @@ object FirebaseManager {
     fun addProductToCart(product: ProductInCart, callback: CallBack<Any>) {
         val ref = database.child("cart").child(MainActivity.userId).child("productId")
             .child(product.id.toString())
+        Log.w("ssdx", "geldi")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
@@ -81,10 +82,12 @@ object FirebaseManager {
                 } else {
                     ref.setValue(product)
                 }
+                callback.onSuccess(true)
             }
 
             override fun onCancelled(error: DatabaseError) {
                 callback.onFailure(error.message)
+
             }
 
         })
@@ -204,7 +207,7 @@ object FirebaseManager {
     fun getUserComments(productId: Long, userId: String, callback: CallBack<MutableList<String>>) {
         database.child("comment").child("productId")
             .child(productId.toString())
-            .child("userId").child(userId.toString()).child("comments")
+            .child("userId").child(userId).child("comments")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val comments = mutableListOf<String>()
@@ -218,7 +221,7 @@ object FirebaseManager {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-
+                    callback.onFailure(error.message)
                 }
 
             })

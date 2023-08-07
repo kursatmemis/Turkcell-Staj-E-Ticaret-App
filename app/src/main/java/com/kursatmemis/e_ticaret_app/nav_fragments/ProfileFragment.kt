@@ -241,23 +241,23 @@ class ProfileFragment : Fragment() {
 
     private fun controlEmptyField(userProfileData: UserProfileData): ControlResult {
 
-        if (userProfileData.firstName?.isEmpty() == true) {
+        if (userProfileData.firstName?.trim()?.isEmpty() == true) {
             return ControlResult("Please enter a valid name.", false)
         }
 
-        if (userProfileData.lastName?.isEmpty() == true) {
+        if (userProfileData.lastName?.trim()?.isEmpty() == true) {
             return ControlResult("Please enter a valid surname.", false)
         }
 
-        if (userProfileData.phone?.isEmpty() == true) {
+        if (userProfileData.phone?.trim()?.isEmpty() == true) {
             return ControlResult("Please enter a valid phone.", false)
         }
 
-        if (userProfileData.address?.address?.isEmpty() == true) {
+        if (userProfileData.address?.address?.trim()?.isEmpty() == true) {
             return ControlResult("Please enter a valid address.", false)
         }
 
-        if (userProfileData.address?.city?.isEmpty() == true) {
+        if (userProfileData.address?.city?.trim()?.isEmpty() == true) {
             return ControlResult("Please enter a valid city.", false)
         }
 

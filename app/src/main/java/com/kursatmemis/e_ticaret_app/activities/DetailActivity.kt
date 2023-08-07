@@ -75,9 +75,6 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun addProductToCartWithFirebase(product: Product) {
-        val message = "The produces added to cart successfully."
-        val fancyType = FancyToast.INFO
-        this.showFancyToast(message, fancyType)
 
         val productInCart = ProductInCart(
             product.thumbnail,
@@ -92,7 +89,10 @@ class DetailActivity : BaseActivity() {
         )
         FirebaseManager.addProductToCart(productInCart, object : CallBack<Any> {
             override fun onSuccess(data: Any) {
-                // Bir şey yapma.
+                val message = "The produces added to cart successfully."
+                val fancyType = FancyToast.INFO
+
+                showFancyToast(message, fancyType)
             }
 
             override fun onFailure(errorMessage: String) {

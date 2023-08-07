@@ -1,8 +1,7 @@
 package com.kursatmemis.e_ticaret_app.activities
 
 import android.os.Bundle
-import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import com.kursatmemis.e_ticaret_app.adapters.CommentAdapter
 import com.kursatmemis.e_ticaret_app.databinding.ActivityCommentBinding
@@ -31,11 +30,11 @@ class CommentActivity : BaseActivity() {
         getCommentsFromFirebase(productId)
 
         binding.addCommentButton.setOnClickListener {
-            showAlertDialog(productId)
+            showAlertDialog(productId, it)
         }
     }
 
-    private fun showAlertDialog(productId: Long) {
+    private fun showAlertDialog(productId: Long, view: View) {
         val bindingDialog = AddCommentDialogBinding.inflate(layoutInflater)
         val builder = AlertDialog.Builder(this@CommentActivity)
         builder.setView(bindingDialog.root)
@@ -46,94 +45,70 @@ class CommentActivity : BaseActivity() {
         bindingDialog.btnSubmit.setOnClickListener {
             val comment = bindingDialog.editTextReview.text.toString()
             if (comment.trim().isEmpty()) {
-                Toast.makeText(
-                    this@CommentActivity,
-                    "Please fill in the field.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showFancyToast("Please fill in the field.", FancyToast.WARNING)
             } else {
                 saveReviewToFirebase(comment, productId)
-                alertDialog.dismiss() // AlertDialog'u kapatın.
+                alertDialog.dismiss()
             }
-
-            val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(
-                bindingDialog.root.windowToken,
-                0
-            ) // Klavyeyi gizleyin.
+            closeKeyboard(it)
         }
 
         alertDialog.show()
     }
 
     private fun saveReviewToFirebase(comment: String, productId: Long) {
+        var userId: String
+        var name: String?
+
         if (MainActivity.isServiceLogin) {
+            // Service login ile kullanıcı girişi yapılmışsa
             RetrofitManager.getUserAllData(object : CallBack<UserAllData?> {
                 override fun onSuccess(data: UserAllData?) {
                     val userAllData = data
-                    val userId = userAllData?.id
-                    val name = userAllData?.firstName
+                    userId = userAllData?.id.toString()
+                    name = userAllData?.firstName
 
-                    FirebaseManager.getUserComments(
-                        productId,
-                        userId.toString(),
-                        object : CallBack<MutableList<String>> {
-                            override fun onSuccess(data: MutableList<String>) {
-                                data.add(comment)
-                                val userComment = UserComment(userId.toString(), name, data)
-                                FirebaseManager.addComment(
-                                    productId.toString(),
-                                    userId!!.toString(), userComment
-                                )
-                                getCommentsFromFirebase(productId)
-                            }
-
-                            override fun onFailure(errorMessage: String) {
-                                showFancyToast(errorMessage, FancyToast.ERROR)
-                            }
-
-                        })
-
+                    addCommentToFirebase(productId.toString(), userId, name, comment)
                 }
 
                 override fun onFailure(errorMessage: String) {
                     showFancyToast(errorMessage, FancyToast.ERROR)
                 }
-
             })
-
         } else {
-            val currentUser = FirebaseManager.auth.currentUser!!
-            val userId = currentUser.uid
-            var name = currentUser.displayName
-            if (name?.isEmpty() == true || name == null) {
-                name = currentUser.email?.substring(0, currentUser.email?.indexOf("@")!!)
+            // Firebase authentication kullanarak giriş yapılmışsa
+            val currentUser = FirebaseManager.auth.currentUser
+            userId = currentUser?.uid ?: ""
+            name = currentUser?.displayName ?: currentUser?.email?.substringBefore("@") ?: ""
+
+            addCommentToFirebase(productId.toString(), userId, name, comment)
+        }
+    }
+
+    private fun addCommentToFirebase(
+        productId: String,
+        userId: String,
+        name: String?,
+        comment: String
+    ) {
+        // Yorum ekleyecek olan kulanıcının bu ürün için daha önceden yapmış olduğu tüm yorum listesini alır,
+        // yeni ekleyeceği yorumu bu listeye ekler ve güncellenmiş olan bu listeyi firebasde update eder.
+        FirebaseManager.getUserComments(productId.toLong(), userId, object : CallBack<MutableList<String>> {
+            override fun onSuccess(data: MutableList<String>) {
+                data.add(comment)
+                val userComment = UserComment(userId, name, data)
+                FirebaseManager.addComment(productId, userId, userComment)
+                getCommentsFromFirebase(productId.toLong())
             }
 
-            FirebaseManager.getUserComments(
-                productId,
-                userId,
-                object : CallBack<MutableList<String>> {
-                    override fun onSuccess(data: MutableList<String>) {
-                        data.add(comment)
-                        val userComment = UserComment(userId, name, data)
-                        FirebaseManager.addComment(
-                            productId.toString(),
-                            userId, userComment
-                        )
-                        getCommentsFromFirebase(productId)
-                    }
-
-                    override fun onFailure(errorMessage: String) {
-                        showFancyToast(errorMessage, FancyToast.ERROR)
-                    }
-
-                })
-        }
-
+            override fun onFailure(errorMessage: String) {
+                showFancyToast(errorMessage, FancyToast.ERROR)
+            }
+        })
     }
 
     private fun getCommentsFromFirebase(productId: Long) {
+        // Firebase'e kaydedilmiş olan tüm yorumları alır.
         FirebaseManager.getComments(
             productId,
             object : CallBack<MutableList<UserComment>> {

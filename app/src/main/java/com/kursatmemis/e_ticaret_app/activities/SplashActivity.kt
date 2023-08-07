@@ -22,7 +22,7 @@ class SplashActivity : BaseActivity() {
         setContentView(binding.root)
 
         val elapsedTime = getElapsedTime()
-        if (elapsedTime < (60 * 10 * 1000)) {
+        if (elapsedTime < (3 * 10 * 1000)) {
             showProgressBar(binding.progressBar)
             autoLogin()
         } else {
